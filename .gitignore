@@ -1,5 +1,8 @@
 node_modules
 .next
+.vinext
+.wrangler
+dist
 .vercel
 CLAUDE.md
 *.tsbuildinfo
