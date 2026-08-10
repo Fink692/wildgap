@@ -9,5 +9,6 @@ CLAUDE.md
 coverage
 .env
 .env.local
+.devpost-hackathon-state.json
 *.log
 .DS_Store
