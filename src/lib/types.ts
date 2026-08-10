@@ -90,7 +90,9 @@ export interface Mission {
     explanation: string;
     dataStatus: DataStatus;
     generatedAt: string;
+    metrics?: CellMetrics;
   };
+  surveyWindow?: SurveyWindow;
   scheduledDate: string;
   durationMinutes: number;
   status: "planned" | "completed";

@@ -10,5 +10,6 @@ coverage
 .env
 .env.local
 .devpost-hackathon-state.json
+docs/audit/
 *.log
 .DS_Store

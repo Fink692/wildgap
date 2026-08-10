@@ -1,11 +1,11 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { FormEvent, useEffect, useState } from "react";
 import { Turnstile } from "@marsidev/react-turnstile";
 import {
   AlertCircle,
   ArrowRight,
+  BarChart3,
   CalendarDays,
   CloudSun,
   Database,
@@ -14,6 +14,7 @@ import {
   LocateFixed,
   Search,
   Sparkles,
+  Sprout,
   X,
 } from "lucide-react";
 import { HabitatMap } from "@/components/habitat-map";
@@ -40,7 +41,6 @@ function dateLabel(date: string) {
 }
 
 export function ExplorerApp({ initialDemo = false }: { initialDemo?: boolean }) {
-  const router = useRouter();
   const [query, setQuery] = useState("Winnipeg");
   const [results, setResults] = useState<GeocodeResult[]>([]);
   const [area, setArea] = useState<GeocodeResult>(WINNIPEG);
@@ -56,14 +56,11 @@ export function ExplorerApp({ initialDemo = false }: { initialDemo?: boolean }) 
   const [captchaToken, setCaptchaToken] = useState<string>();
   const [creatingMission, setCreatingMission] = useState(false);
 
-  const selectedCell = useMemo(
-    () => analysis?.cells.find((cell) => cell.id === selectedCellId),
-    [analysis, selectedCellId],
-  );
+  const selectedCell = analysis?.cells.find((cell) => cell.id === selectedCellId);
 
   async function runAnalysis(forceDemo = false) {
     setAnalyzing(true);
-    setAnalysisStage("Building habitat cells…");
+    setAnalysisStage(forceDemo ? "Loading the Winnipeg snapshot…" : "Building habitat cells…");
     const stageTimers = [
       window.setTimeout(() => setAnalysisStage("Comparing GBIF observation windows…"), 1_200),
       window.setTimeout(() => setAnalysisStage("Adding climate and field conditions…"), 6_000),
@@ -147,7 +144,9 @@ export function ExplorerApp({ initialDemo = false }: { initialDemo?: boolean }) 
         explanation: cell.explanation,
         dataStatus: analysis.dataStatus,
         generatedAt: analysis.generatedAt,
+        metrics: cell.metrics,
       },
+      surveyWindow: analysis.surveyWindows.find((window) => window.date === scheduledDate),
       scheduledDate,
       durationMinutes: 60,
       status: "planned",
@@ -156,11 +155,11 @@ export function ExplorerApp({ initialDemo = false }: { initialDemo?: boolean }) 
     };
     const result = await persistMission(mission, captchaToken);
     const encoded = encodeMission(result.mission);
-    router.push(`/missions/${mission.id}?data=${encoded}`);
+    window.location.assign(`/missions/${mission.id}?data=${encoded}`);
   }
 
   return (
-    <div className="explorer-layout">
+    <div className={`explorer-layout ${analysis ? "has-analysis" : ""}`}>
       <aside className="explorer-sidebar" aria-label="Analysis controls and ranked results">
         <div className="control-block">
           <div className="control-label">1 · Choose a place <span>{area.admin1 ?? area.country}</span></div>
@@ -188,12 +187,23 @@ export function ExplorerApp({ initialDemo = false }: { initialDemo?: boolean }) 
           <button className="button button-primary analyze-button" onClick={() => void runAnalysis(false)} disabled={analyzing}>
             {analyzing ? <><LoaderCircle size={18} className="spinner" /> {analysisStage}</> : <><LocateFixed size={18} /> Analyze this habitat</>}
           </button>
-          <p className="status-note"><Info size={14} /> A first analysis can take 5–15 seconds; cached areas are faster. Coverage never means wildlife abundance.</p>
+          {analyzing && (
+            <div className="analysis-progress" role="status" aria-live="polite">
+              <span className="analysis-progress-bar" />
+              <p>{analysisStage}<small>GBIF and weather requests are time-bounded. The Winnipeg snapshot is always labeled.</small></p>
+            </div>
+          )}
+          <p className="status-note"><Info size={14} /> A first analysis can take 5–20 seconds; cached areas are faster. Coverage never means wildlife abundance.</p>
           {error && <div className="analysis-status error" role="alert"><AlertCircle size={15} />{error}</div>}
         </div>
 
         {analysis && (
           <>
+            <div className="result-summary" aria-label="Analysis summary">
+              <div><span>Area</span><strong>{analysis.area.radiusKm} km</strong></div>
+              <div><span>Compared</span><strong>{analysis.cells.length} cells</strong></div>
+              <div><span>Source</span><strong>{analysis.dataStatus === "live" ? "Live" : "Snapshot"}</strong></div>
+            </div>
             <div className={`analysis-status ${analysis.dataStatus}`}>
               {analysis.dataStatus === "live" ? <Database size={15} /> : <AlertCircle size={15} />}
               <span><strong>{analysis.dataStatus === "live" ? "Live analysis" : "Demo snapshot"}</strong><br />{analysis.dataStatusMessage}</span>
@@ -218,6 +228,11 @@ export function ExplorerApp({ initialDemo = false }: { initialDemo?: boolean }) 
                 </div>
               ))}
             </div>
+            <details className="method-details">
+              <summary><BarChart3 size={15} /> How survey priority works</summary>
+              <p><strong>55% density gap</strong> + <strong>30% coverage change</strong> + <strong>15% target-group gap</strong>. Rankings are suppressed when the baseline is too thin.</p>
+              <p>These are observation-coverage signals—not population, abundance or habitat-health estimates.</p>
+            </details>
           </>
         )}
       </aside>
@@ -232,9 +247,14 @@ export function ExplorerApp({ initialDemo = false }: { initialDemo?: boolean }) 
             <h2>Survey {selectedCell.targetTaxon.toLowerCase()}</h2>
             <p>{selectedCell.explanation}</p>
             <div className="metric-row">
-              <div><strong>{selectedCell.gapScore ?? "—"}</strong><span>gap score</span></div>
+              <div><strong>{selectedCell.gapScore ?? "—"}</strong><span>priority</span></div>
               <div><strong>{selectedCell.metrics.recentRecords.toLocaleString()}</strong><span>recent</span></div>
               <div><strong>{selectedCell.metrics.annualizedPriorRecords.toLocaleString()}</strong><span>prior / yr</span></div>
+            </div>
+            <div className="score-breakdown" aria-label="Survey priority components">
+              <div><span><Database size={13} /> Density gap</span><strong>{Math.round(selectedCell.metrics.densityGap * 100)}</strong></div>
+              <div><span><BarChart3 size={13} /> Coverage change</span><strong>{Math.round(selectedCell.metrics.coverageChange * 100)}</strong></div>
+              <div><span><Sprout size={13} /> Target gap</span><strong>{Math.round(selectedCell.metrics.targetGap * 100)}</strong></div>
             </div>
             <div className="mission-form">
               <label><span><CalendarDays size={13} style={{ display: "inline", marginRight: 5 }} />Suggested survey date</span>

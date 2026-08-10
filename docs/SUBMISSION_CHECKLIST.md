@@ -2,7 +2,7 @@
 
 ## Accounts and compliance
 
-- [ ] Register the eligible entrant on Devpost.
+- [x] Register the eligible entrant on Devpost (verified August 10, 2026).
 - [ ] Join the organizer Discord.
 - [ ] Ask organizers to clarify build dates, eligibility wording, prize tracks, and post-deadline bug fixes.
 - [ ] Confirm the entrant and any teammates meet the published eligibility rules.

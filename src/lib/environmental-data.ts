@@ -237,9 +237,10 @@ export async function buildLiveAnalysis(input: {
   const recentStart = shiftYears(now, -1);
   const priorStart = shiftYears(now, -4);
   const h3Cells = cellsForArea(input.latitude, input.longitude, input.radiusKm);
+  const weatherPromise = climateAndSurveyWindows(input.latitude, input.longitude);
   const taxonKeys = await resolveTaxonKeys();
   const [rawCells, weather] = await Promise.all([
-    mapWithConcurrency(h3Cells, 4, async (cell) => {
+    mapWithConcurrency(h3Cells, 6, async (cell) => {
       const polygon = polygonForCell(cell);
       const [recent, prior] = await Promise.all([
         gbifWindow(polygon, recentStart, now, taxonKeys),
@@ -253,7 +254,7 @@ export async function buildLiveAnalysis(input: {
         areaKm2: areaForCell(cell),
       };
     }),
-    climateAndSurveyWindows(input.latitude, input.longitude),
+    weatherPromise,
   ]);
   const scored = scoreCells(rawCells);
   const totalPrior = rawCells.reduce((total, cell) => total + cell.priorRecords, 0);

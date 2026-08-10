@@ -33,6 +33,8 @@ The hardest problem was scientific restraint. Opportunistic occurrence records c
 - One location-to-mission flow that works globally
 - Live multi-source analysis with bounded concurrency and caching
 - A complete keyboard-accessible alternative to the map
+- Score components exposed in both the explorer and field card
+- A printable 60-minute protocol with weather, safety and readiness checks
 - Honest failure behavior: a clearly labeled Winnipeg snapshot or a retryable error, never silent estimates
 - Shareable missions that remain functional without an account
 

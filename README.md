@@ -19,6 +19,7 @@ Live app: [wildgap-habitat-2026.fink692.chatgpt.site](https://wildgap-habitat-20
 - Previous-month climate context and seven-day survey windows from Open-Meteo
 - Interactive MapLibre/OpenFreeMap map plus an equivalent keyboard-accessible ranked list
 - Portable, printable mission links that work without an account
+- Field cards with score provenance, weather, readiness checks, a timed protocol, and optional evidence completion
 - Optional Supabase anonymous sessions, public sharing, RLS, and Turnstile protection
 - Explicitly labeled Winnipeg demo snapshot for outage-safe judging
 

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Leaf } from "lucide-react";
 
 export function SiteFooter() {
@@ -17,8 +16,8 @@ export function SiteFooter() {
         </div>
         <div>
           <p className="footer-label">Explore</p>
-          <Link href="/explore">Scout a habitat</Link>
-          <Link href="/#method">Read the method</Link>
+          <a href="/explore">Scout a habitat</a>
+          <a href="/#method">Read the method</a>
           <a href="https://github.com/Fink692/wildgap" target="_blank" rel="noreferrer">Source code</a>
           <a href="https://hack-the-habitat-2026.devpost.com/" target="_blank" rel="noreferrer">Hack the Habitat</a>
         </div>

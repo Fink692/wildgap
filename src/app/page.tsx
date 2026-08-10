@@ -1,20 +1,24 @@
-import Link from "next/link";
 import {
   ArrowRight,
   Binoculars,
+  CalendarCheck,
   Check,
+  CircleDashed,
   CloudSun,
   Database,
+  Gauge,
+  Layers3,
   Map,
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
 import { ImpactStats } from "@/components/impact-stats";
 
-const rubric = [
-  ["30%", "Impact", "A field mission, not another passive dashboard."],
-  ["25%", "Technology", "Live biodiversity, weather and geospatial analysis."],
-  ["20%", "Usability", "From location search to field card in under three minutes."],
+const trustFacts = [
+  { icon: Layers3, value: "7–19", label: "adaptive H3 cells", detail: "Enough local comparison without creating a wall of hexagons." },
+  { icon: Database, value: "2", label: "observation windows", detail: "The latest 12 months versus an annualized three-year baseline." },
+  { icon: Gauge, value: "50+", label: "records to rank", detail: "Below the evidence floor, WildGap suppresses the leaderboard." },
+  { icon: ShieldCheck, value: "0", label: "population claims", detail: "A coverage gap is a reason to look—not evidence of ecological decline." },
 ];
 
 export default function Home() {
@@ -29,29 +33,26 @@ export default function Home() {
               WildGap turns uneven biodiversity records into clear, safe field missions for school eco-clubs and citizen scientists.
             </p>
             <div className="hero-actions">
-              <Link className="button button-primary" href="/explore">
+              <a className="button button-primary" href="/explore">
                 Scout a habitat <ArrowRight size={18} />
-              </Link>
-              <Link className="text-link" href="/explore?demo=1">See the Winnipeg demo</Link>
+              </a>
+              <a className="text-link" href="/explore?demo=1">See the Winnipeg demo</a>
             </div>
-            <p className="hero-note"><ShieldCheck size={16} /> No sign-up required. No population claims. Open data, plainly explained.</p>
+            <div className="hero-proof" aria-label="Product promises">
+              <span><ShieldCheck size={15} /> No sign-up</span>
+              <span><Database size={15} /> Open data</span>
+              <span><Binoculars size={15} /> Field-ready</span>
+            </div>
           </div>
-          <div className="hero-visual" role="img" aria-label="Preview of WildGap survey-priority map">
-            <div className="topographic-rings" aria-hidden="true" />
-            <div className="map-card map-card-main">
-              <div className="map-card-label"><span className="live-dot" /> Winnipeg · live area</div>
-              <div className="hex-field" aria-hidden="true">
-                <span className="hex h1">73</span><span className="hex h2">61</span><span className="hex h3">84</span>
-                <span className="hex h4">42</span><span className="hex h5">68</span><span className="hex h6">55</span>
-              </div>
-              <div className="map-scale"><span>Lower gap</span><i /><span>Higher gap</span></div>
-            </div>
-            <div className="floating-card mission-peek">
-              <span className="icon-chip"><Binoculars size={17} /></span>
-              <div><small>Top mission</small><strong>Survey insects</strong><span>Wednesday · 60 min</span></div>
-            </div>
-            <div className="floating-card data-peek"><Database size={16} /><span>Live GBIF records</span></div>
-          </div>
+          <figure className="product-preview">
+            <img
+              src="/wildgap-product.png"
+              alt="WildGap's Winnipeg survey-priority map with a fungi mission selected"
+              width={1180}
+              height={720}
+            />
+            <figcaption><span className="live-dot" /> Real product view · Winnipeg demo snapshot</figcaption>
+          </figure>
         </div>
       </section>
 
@@ -76,22 +77,39 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section case-study">
-        <div className="shell case-grid">
-          <div className="case-visual">
-            <div className="case-stamp">WINNIPEG PILOT<br /><strong>49.8844° N</strong></div>
-            <div className="case-circles" aria-hidden="true"><i /><i /><i /><i /></div>
+      <section className="section method-proof" aria-labelledby="score-heading">
+        <div className="shell method-proof-grid">
+          <div>
+            <p className="eyebrow light">Transparent by construction</p>
+            <h2 id="score-heading">A score you can challenge.</h2>
+            <p className="method-intro">Every ranked cell exposes the same three ingredients. Climate data helps choose when to survey; it never changes the biodiversity gap score.</p>
+            <div className="formula" aria-label="Gap score formula">
+              <span>Survey priority</span>
+              <strong>55% D + 30% C + 15% T</strong>
+            </div>
           </div>
-          <div className="case-copy">
-            <p className="eyebrow light">The pilot</p>
-            <h2>A global tool.<br />A local proof.</h2>
-            <p>Winnipeg is the first end-to-end demonstration: identify a candidate monitoring gap, create a public-area mission, complete a 60-minute survey and link the resulting observation evidence.</p>
-            <ul className="check-list">
-              <li><Check size={17} /> Live and transparently timestamped data</li>
-              <li><Check size={17} /> A real field outing, not simulated impact</li>
-              <li><Check size={17} /> Two uncoached usability tests</li>
-            </ul>
-            <Link className="button button-cream" href="/explore?demo=1">Open pilot analysis <ArrowRight size={17} /></Link>
+          <dl className="score-definitions">
+            <div><dt>D · Density gap <span>55%</span></dt><dd>How sparse recent coordinate-valid records are per square kilometre compared with nearby cells.</dd></div>
+            <div><dt>C · Coverage change <span>30%</span></dt><dd>Whether recent coverage is lower than the annualized observation baseline—not whether wildlife declined.</dd></div>
+            <div><dt>T · Target gap <span>15%</span></dt><dd>Whether plants, fungi, birds or insects appeared nearby or historically but are under-observed recently.</dd></div>
+          </dl>
+        </div>
+      </section>
+
+      <section className="section case-study">
+        <div className="shell pilot-grid">
+          <div className="pilot-copy">
+            <p className="eyebrow light">Winnipeg pilot</p>
+            <h2>Built locally.<br />Useful globally.</h2>
+            <p>Winnipeg is the launch site for the first documented field loop. The software is ready now; physical survey and independent tester evidence will be added only after they happen.</p>
+            <a className="button button-cream" href="/explore?demo=1">Open pilot analysis <ArrowRight size={17} /></a>
+          </div>
+          <div className="pilot-status" aria-label="Winnipeg pilot status">
+            <p className="pilot-status-title">Evidence ledger</p>
+            <div className="status-row complete"><Check size={18} /><span><strong>Analysis built</strong><small>Timestamped Winnipeg snapshot and live retry</small></span><b>Ready</b></div>
+            <div className="status-row complete"><Check size={18} /><span><strong>Mission protocol</strong><small>Printable, shareable 60-minute field card</small></span><b>Ready</b></div>
+            <div className="status-row pending"><CircleDashed size={18} /><span><strong>Field observation</strong><small>Public evidence link after the first outing</small></span><b>Pending</b></div>
+            <div className="status-row pending"><CircleDashed size={18} /><span><strong>Two usability tests</strong><small>Uncoached, timed and documented</small></span><b>Pending</b></div>
           </div>
         </div>
       </section>
@@ -100,20 +118,21 @@ export default function Home() {
         <div className="section-heading centered-heading">
           <p className="eyebrow">Measured honestly</p>
           <h2>Count actions, not promises.</h2>
-          <p>These counters update from missions on this device until shared Supabase persistence is connected.</p>
+          <p>Until shared persistence is connected, these counters reflect missions created and completed on this device.</p>
         </div>
         <ImpactStats />
-        <div className="rubric-grid">
-          {rubric.map(([percent, label, detail]) => (
-            <article key={label}><strong>{percent}</strong><h3>{label}</h3><p>{detail}</p></article>
+        <div className="trust-grid">
+          {trustFacts.map(({ icon: Icon, value, label, detail }) => (
+            <article key={label}><Icon size={21} /><strong>{value}</strong><h3>{label}</h3><p>{detail}</p></article>
           ))}
         </div>
+        <div className="proof-note"><CalendarCheck size={19} /><p><strong>Judge the evidence, not the ambition.</strong> Planned surveys never count as completed visits, and evidence links remain optional but visible.</p></div>
       </section>
 
       <section className="cta-band">
         <div className="shell cta-inner">
           <div><p className="eyebrow light">Your neighbourhood is next</p><h2>Where should we look?</h2></div>
-          <Link className="button button-cream" href="/explore">Scout an area <ArrowRight size={18} /></Link>
+          <a className="button button-cream" href="/explore">Scout an area <ArrowRight size={18} /></a>
         </div>
       </section>
     </main>
