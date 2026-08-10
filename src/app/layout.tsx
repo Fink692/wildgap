@@ -9,7 +9,9 @@ const sans = DM_Sans({ subsets: ["latin"], variable: "--font-sans" });
 const serif = Newsreader({ subsets: ["latin"], variable: "--font-serif" });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://wildgap-habitat-2026.fink692.chatgpt.site",
+  ),
   title: { default: "WildGap — Find nature's missing data", template: "%s · WildGap" },
   description:
     "Turn biodiversity observation gaps into safe, shareable citizen-science field missions.",

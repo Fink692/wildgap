@@ -6,6 +6,8 @@ WildGap is a biodiversity survey copilot for school eco-clubs and citizen scient
 
 Public repository: [github.com/Fink692/wildgap](https://github.com/Fink692/wildgap)
 
+Live app: [wildgap-habitat-2026.fink692.chatgpt.site](https://wildgap-habitat-2026.fink692.chatgpt.site)
+
 > WildGap ranks **observation coverage gaps**. It does not estimate habitat health, species abundance, population decline, or ecological causation.
 
 ## What works

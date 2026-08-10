@@ -2,7 +2,7 @@
 
 Repository: [github.com/Fink692/wildgap](https://github.com/Fink692/wildgap)
 
-Production URL: **pending Vercel authentication and deployment**
+Production URL: [wildgap-habitat-2026.fink692.chatgpt.site](https://wildgap-habitat-2026.fink692.chatgpt.site)
 
 ## Inspiration
 
@@ -46,7 +46,7 @@ Partner with school eco-clubs, validate target-group protocols with local natura
 
 ## Before submitting
 
-- [ ] Add final live URL and public GitHub URL
+- [x] Add final live URL and public GitHub URL
 - [ ] Complete the Winnipeg pilot and link evidence
 - [ ] Add two tester results without inventing quotes
 - [ ] Upload the 2:45 demo video
