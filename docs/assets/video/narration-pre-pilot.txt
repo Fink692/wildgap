@@ -1,0 +1,19 @@
+You cannot protect what you cannot see. Biodiversity data has blind spots because observations cluster where people already look. WildGap turns those missing observations into one useful action: a safe field mission.
+
+Start by searching any city, park, or neighbourhood. Choose a two, five, or ten kilometre area. WildGap divides the area into comparable H3 cells and combines two open data sources.
+
+For biodiversity coverage, it queries coordinate-valid GBIF observations. Each cell compares the latest twelve completed months with the preceding three-year baseline. A transparent score combines the inverse percentile of recent observation density, change from the annualized baseline, and whether plants, fungi, birds, or insects appear historically or nearby but are recently under-observed.
+
+This is survey priority. It is not habitat health, wildlife abundance, population decline, or a diagnosis of ecological cause. When there is not enough comparable baseline data, WildGap suppresses the ranking instead of pretending to know. Every result also includes its confidence and source timestamp.
+
+The interactive map makes the spatial pattern visible, while the ranked list gives keyboard and screen-reader users equal access to every candidate. Here in the Winnipeg demonstration, we can select a high-priority cell and see why it ranked there.
+
+Open-Meteo adds the previous month’s temperature and precipitation context, then ranks the next seven days for comfortable field conditions. Pick a date and WildGap creates a repeatable sixty-minute mission with a target group, safety guidance, map cell, and observation protocol.
+
+The mission card works on a phone, prints cleanly, and can be shared without requiring an account. After the outing, the owner can mark it complete and add a public iNaturalist, eBird, or comparable evidence link. Impact counters report only defensible actions: missions planned, missions completed, priority cells visited, and evidence links added.
+
+Under the hood, WildGap uses Next.js, TypeScript, MapLibre, OpenFreeMap, H3, GBIF, and Open-Meteo. Live requests have timeouts, bounded concurrency, and cache windows. A clearly labeled Winnipeg snapshot keeps the primary demo usable during third-party outages; it is never silently substituted for global live data. Optional Supabase anonymous sessions and row-level security add persistent public links, while portable mission URLs preserve the no-account fallback.
+
+This is the pre-pilot cut. Before submission, the proof segment must be replaced with the real Winnipeg outing, its public observation evidence, and measured results from two uncoached usability tests. No outcomes are invented.
+
+WildGap does not promise to solve biodiversity loss from a dashboard. It helps one more person collect one more useful observation. Nature has blind spots. Let’s go find them.

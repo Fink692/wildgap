@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">WildGap architecture</title>
+  <desc id="desc">Citizen scientists use a Next.js explorer which calls H3, GBIF and Open-Meteo analysis, then creates portable or Supabase-backed missions.</desc>
+  <rect width="1600" height="900" fill="#f7f3e8"/>
+  <text x="100" y="105" fill="#173f35" font-family="Georgia,serif" font-size="60">WildGap architecture</text>
+  <text x="100" y="155" fill="#5e6f68" font-family="Arial,sans-serif" font-size="24">Transparent geospatial analysis → one useful field action</text>
+  <g font-family="Arial,sans-serif">
+    <g transform="translate(90 310)">
+      <rect width="270" height="170" rx="24" fill="#173f35"/>
+      <circle cx="60" cy="58" r="22" fill="#eeab42"/>
+      <text x="100" y="66" fill="#fffaf0" font-size="26" font-weight="700">Citizen scientist</text>
+      <text x="34" y="118" fill="#d9e3dc" font-size="20">Search · compare · survey</text>
+    </g>
+    <path d="M380 395H500" stroke="#88a78c" stroke-width="8" marker-end="url(#arrow)"/>
+    <g transform="translate(520 250)">
+      <rect width="340" height="290" rx="24" fill="#fff" stroke="#c9d1c9" stroke-width="3"/>
+      <text x="34" y="60" fill="#173f35" font-size="29" font-weight="700">Next.js explorer</text>
+      <text x="34" y="105" fill="#5e6f68" font-size="21">MapLibre map + ranked list</text>
+      <text x="34" y="145" fill="#5e6f68" font-size="21">Accessible mission builder</text>
+      <rect x="34" y="186" width="272" height="64" rx="14" fill="#edf1e8"/>
+      <text x="62" y="226" fill="#315e4d" font-size="22">GET /api/analysis</text>
+    </g>
+    <path d="M880 395H985" stroke="#88a78c" stroke-width="8" marker-end="url(#arrow)"/>
+    <g transform="translate(1005 190)">
+      <rect width="500" height="410" rx="24" fill="#173f35"/>
+      <text x="34" y="60" fill="#fffaf0" font-size="29" font-weight="700">Analysis service</text>
+      <g transform="translate(34 92)">
+        <rect width="205" height="94" rx="15" fill="#315e4d"/>
+        <text x="24" y="40" fill="#fffaf0" font-size="23" font-weight="700">H3</text>
+        <text x="24" y="70" fill="#d9e3dc" font-size="18">7–19 cells</text>
+      </g>
+      <g transform="translate(260 92)">
+        <rect width="205" height="94" rx="15" fill="#315e4d"/>
+        <text x="24" y="40" fill="#fffaf0" font-size="23" font-weight="700">GBIF</text>
+        <text x="24" y="70" fill="#d9e3dc" font-size="18">Observation coverage</text>
+      </g>
+      <g transform="translate(34 206)">
+        <rect width="205" height="94" rx="15" fill="#315e4d"/>
+        <text x="24" y="40" fill="#fffaf0" font-size="23" font-weight="700">Open-Meteo</text>
+        <text x="24" y="70" fill="#d9e3dc" font-size="18">Climate + forecast</text>
+      </g>
+      <g transform="translate(260 206)">
+        <rect width="205" height="94" rx="15" fill="#eeab42"/>
+        <text x="24" y="40" fill="#173f35" font-size="23" font-weight="700">Gap score</text>
+        <text x="24" y="70" fill="#173f35" font-size="18">D 55% · C 30% · T 15%</text>
+      </g>
+      <text x="34" y="354" fill="#d9e3dc" font-size="19">24h biodiversity cache · 1h weather cache</text>
+      <text x="34" y="384" fill="#d9e3dc" font-size="19">Explicit Winnipeg snapshot fallback</text>
+    </g>
+    <path d="M690 560V676" stroke="#88a78c" stroke-width="8" marker-end="url(#arrow)"/>
+    <g transform="translate(430 700)">
+      <rect width="520" height="125" rx="24" fill="#fff" stroke="#c9d1c9" stroke-width="3"/>
+      <text x="34" y="52" fill="#173f35" font-size="26" font-weight="700">Shareable 60-minute mission</text>
+      <text x="34" y="91" fill="#5e6f68" font-size="20">Portable URL/local storage · optional Supabase RLS</text>
+    </g>
+  </g>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#88a78c"/>
+    </marker>
+  </defs>
+</svg>

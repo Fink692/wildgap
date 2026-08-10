@@ -1,0 +1,54 @@
+1
+00:00:00,000 --> 00:00:14,500
+You cannot protect what you cannot see. Biodiversity data has blind spots.
+WildGap turns those missing observations into one useful action: a safe field mission.
+
+2
+00:00:14,500 --> 00:00:27,500
+Search any city, park, or neighbourhood. Choose a two, five, or ten kilometre area.
+WildGap divides it into comparable H3 cells and combines two open data sources.
+
+3
+00:00:27,500 --> 00:00:48,000
+Each cell compares the latest twelve completed months of GBIF coverage
+with the preceding three-year baseline using a transparent score.
+
+4
+00:00:48,000 --> 00:01:04,000
+This is survey priority—not habitat health, wildlife abundance,
+population decline, or a diagnosis of ecological cause.
+
+5
+00:01:04,000 --> 00:01:18,500
+When comparable baseline data is insufficient, WildGap suppresses the ranking.
+Every result includes confidence and source timestamps.
+
+6
+00:01:18,500 --> 00:01:33,000
+The map makes spatial patterns visible. The ranked list gives keyboard
+and screen-reader users equal access to every candidate.
+
+7
+00:01:33,000 --> 00:01:47,500
+Open-Meteo adds climate context and ranks comfortable field days.
+Choose a date to create a repeatable sixty-minute survey mission.
+
+8
+00:01:47,500 --> 00:02:03,500
+The mission card works on a phone, prints cleanly, and shares without an account.
+After the outing, add public observation evidence and mark it complete.
+
+9
+00:02:03,500 --> 00:02:21,500
+WildGap uses Next.js, TypeScript, MapLibre, H3, GBIF, and Open-Meteo,
+with bounded requests, caching, and an explicitly labeled Winnipeg snapshot.
+
+10
+00:02:21,500 --> 00:02:38,000
+This is the pre-pilot cut. Before submission, real Winnipeg evidence
+and measured results from two uncoached testers must replace this segment.
+
+11
+00:02:38,000 --> 00:02:44,300
+Nature has blind spots.
+Let’s go find them.
