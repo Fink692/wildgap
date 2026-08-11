@@ -20,6 +20,12 @@ Open-Meteo adds recent climate context and ranks upcoming field windows. A user 
 
 WildGap calls the result **survey priority**. It never labels observation gaps as habitat health, species abundance, population decline, confirmed absence, or ecological causation.
 
+## Product Tour
+
+![WildGap explorer showing comparable H3 cells and a transparent survey-priority breakdown](https://raw.githubusercontent.com/Fink692/wildgap/main/docs/assets/screenshots/explorer-desktop.png)
+
+![WildGap mobile field card showing a printable 60-minute fungi mission](https://raw.githubusercontent.com/Fink692/wildgap/main/docs/assets/screenshots/mission-mobile.png)
+
 ## Why This Matters
 
 Environmental decisions are only as good as the observations behind them. WildGap turns an abstract monitoring gap into a concrete action that a student or community naturalist can take this weekend. It supports the challenge theme by combining real environmental data with an end-to-end conservation-monitoring workflow, while making sampling bias and uncertainty visible instead of hiding them.
