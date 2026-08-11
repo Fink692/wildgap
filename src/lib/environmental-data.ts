@@ -18,6 +18,7 @@ const DEFAULT_TAXON_KEYS: Record<TargetTaxon, number> = {
   Birds: 212,
   Insects: 216,
 };
+const GBIF_SEARCH_CONCURRENCY = 6;
 
 type JsonRecord = Record<string, unknown>;
 
@@ -29,9 +30,14 @@ async function fetchJson<T>(url: string, revalidate: number): Promise<T> {
       signal: AbortSignal.timeout(8_000),
     });
     if (response.ok) return (await response.json()) as T;
-    if (response.status === 429 && attempt < 2) {
+    const retryable = response.status === 429 || [502, 503, 504].includes(response.status);
+    if (retryable && attempt < 2) {
       const retryAfter = Number(response.headers.get("retry-after") ?? 0);
-      const delayMs = Math.min(Math.max(Number.isFinite(retryAfter) ? retryAfter * 1_000 : 0, 600 * (attempt + 1)), 2_000);
+      const minimumDelay = response.status === 429 ? 800 : 250;
+      const delayMs = Math.min(
+        Math.max(Number.isFinite(retryAfter) ? retryAfter * 1_000 : 0, minimumDelay * (attempt + 1)),
+        4_000,
+      );
       await new Promise<void>((resolve) => setTimeout(resolve, delayMs));
       continue;
     }
@@ -88,7 +94,6 @@ async function gbifWindow(
   polygon: [number, number][],
   start: Date,
   end: Date,
-  keys: Record<TargetTaxon, number>,
 ) {
   const query = new URLSearchParams({
     geometry: polygonWkt(polygon),
@@ -104,11 +109,10 @@ async function gbifWindow(
   query.append("basisOfRecord", "OBSERVATION");
   query.append("facet", "kingdomKey");
   query.append("facet", "classKey");
-  const response = await fetchJson<GbifResponse>(
+  return fetchJson<GbifResponse>(
     `${GBIF_BASE}/occurrence/search?${query.toString()}`,
     86_400,
   );
-  return { records: response.count, taxa: countsFromFacets(response, keys) };
 }
 
 async function mapWithConcurrency<T, R>(
@@ -225,7 +229,7 @@ async function climateAndSurveyWindows(latitude: number, longitude: number) {
       label: score >= 80 ? "Excellent" : score >= 65 ? "Good" : "Fair",
     };
   }).sort((a, b) => b.score - a.score).slice(0, 3);
-  return { climate, windows };
+  return { climate, windows, fetchedAt: new Date().toISOString() };
 }
 
 export async function buildLiveAnalysis(input: {
@@ -238,25 +242,48 @@ export async function buildLiveAnalysis(input: {
   const recentStart = shiftYears(now, -1);
   const priorStart = shiftYears(now, -4);
   const h3Cells = cellsForArea(input.latitude, input.longitude, input.radiusKm);
-  const weatherPromise = climateAndSurveyWindows(input.latitude, input.longitude);
-  const taxonKeys = await resolveTaxonKeys();
-  const [rawCells, weather] = await Promise.all([
-    mapWithConcurrency(h3Cells, 6, async (cell) => {
-      const polygon = polygonForCell(cell);
-      const [recent, prior] = await Promise.all([
-        gbifWindow(polygon, recentStart, now, taxonKeys),
-        gbifWindow(polygon, priorStart, recentStart, taxonKeys),
-      ]);
-      return {
-        recentRecords: recent.records,
-        priorRecords: prior.records,
-        recentTaxa: recent.taxa,
-        priorTaxa: prior.taxa,
-        areaKm2: areaForCell(cell),
-      };
-    }),
-    weatherPromise,
+  const cellGeometry = h3Cells.map((cell) => ({
+    cell,
+    polygon: polygonForCell(cell),
+    areaKm2: areaForCell(cell),
+  }));
+  const gbifTasks = cellGeometry.flatMap(({ polygon }, cellIndex) => [
+    { cellIndex, window: "recent" as const, polygon, start: recentStart, end: now },
+    { cellIndex, window: "prior" as const, polygon, start: priorStart, end: recentStart },
   ]);
+
+  // GBIF documents that rapid occurrence-search traffic may be rate limited.
+  // Queue individual window requests so no paired cell request leaves capacity
+  // idle, while keeping the total request rate deliberately bounded.
+  const [gbifResponses, weather, taxonKeys] = await Promise.all([
+    mapWithConcurrency(gbifTasks, GBIF_SEARCH_CONCURRENCY, async (task) => ({
+      ...task,
+      response: await gbifWindow(task.polygon, task.start, task.end),
+    })),
+    climateAndSurveyWindows(input.latitude, input.longitude),
+    resolveTaxonKeys(),
+  ]);
+  const windowsByCell = gbifResponses.reduce<Array<Partial<Record<"recent" | "prior", GbifResponse>>>>(
+    (cells, result) => {
+      const windows = cells[result.cellIndex] ?? {};
+      windows[result.window] = result.response;
+      cells[result.cellIndex] = windows;
+      return cells;
+    },
+    [],
+  );
+  const rawCells = cellGeometry.map(({ areaKm2 }, index) => {
+    const recent = windowsByCell[index]?.recent;
+    const prior = windowsByCell[index]?.prior;
+    if (!recent || !prior) throw new Error("Incomplete GBIF window response");
+    return {
+      recentRecords: recent.count,
+      priorRecords: prior.count,
+      recentTaxa: countsFromFacets(recent, taxonKeys),
+      priorTaxa: countsFromFacets(prior, taxonKeys),
+      areaKm2,
+    };
+  });
   const scored = scoreCells(rawCells);
   const totalPrior = rawCells.reduce((total, cell) => total + cell.priorRecords, 0);
   const comparableCells = rawCells.filter((cell) => cell.priorRecords >= 20).length;
@@ -265,7 +292,7 @@ export async function buildLiveAnalysis(input: {
     const result = scored[index];
     return {
       id: cell,
-      polygon: polygonForCell(cell),
+      polygon: cellGeometry[index].polygon,
       center: centerForCell(cell),
       areaKm2: Number(rawCells[index].areaKm2.toFixed(2)),
       gapScore: rankingSuppressed ? null : result.gapScore,
@@ -284,6 +311,10 @@ export async function buildLiveAnalysis(input: {
     id: `${fingerprint}-${randomUUID().slice(0, 8)}`,
     area: input,
     generatedAt: now.toISOString(),
+    sourceTimestamps: {
+      gbif: new Date().toISOString(),
+      weather: weather.fetchedAt,
+    },
     dataStatus: "live",
     dataStatusMessage: "Live GBIF occurrence coverage and Open-Meteo weather context.",
     rankingSuppressed,

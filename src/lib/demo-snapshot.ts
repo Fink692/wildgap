@@ -58,6 +58,10 @@ export function buildWinnipegSnapshot(radiusKm = 5): HabitatAnalysis {
     id: randomUUID(),
     area: { label: "Winnipeg, Manitoba, Canada", latitude, longitude, radiusKm },
     generatedAt: "2026-08-10T12:00:00.000Z",
+    sourceTimestamps: {
+      gbif: "2026-08-10T12:00:00.000Z",
+      weather: "2026-08-10T12:00:00.000Z",
+    },
     dataStatus: "demo-snapshot",
     dataStatusMessage:
       "Clearly labeled demo snapshot from August 10, 2026. Retry to request live sources.",

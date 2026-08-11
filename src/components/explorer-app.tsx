@@ -65,6 +65,7 @@ export function ExplorerApp({ initialDemo = false }: { initialDemo?: boolean }) 
       window.setTimeout(() => setAnalysisStage("Comparing GBIF observation windows…"), 1_200),
       window.setTimeout(() => setAnalysisStage("Adding climate and field conditions…"), 6_000),
       window.setTimeout(() => setAnalysisStage("Finishing the transparent score…"), 11_000),
+      window.setTimeout(() => setAnalysisStage("Respecting an upstream rate limit…"), 20_000),
     ];
     setError("");
     setSelectedCellId(undefined);
@@ -199,7 +200,7 @@ export function ExplorerApp({ initialDemo = false }: { initialDemo?: boolean }) 
               <p>{analysisStage}<small>GBIF and weather requests are time-bounded. The Winnipeg snapshot is always labeled.</small></p>
             </div>
           )}
-          <p className="status-note"><Info size={14} /> A first analysis can take 5–20 seconds; cached areas are faster. Coverage never means wildlife abundance.</p>
+          <p className="status-note"><Info size={14} /> A first live analysis can take 8–25 seconds; cached areas are faster. Coverage never means wildlife abundance.</p>
           {error && <div className="analysis-status error" role="alert"><AlertCircle size={15} />{error}</div>}
         </div>
 
@@ -212,7 +213,7 @@ export function ExplorerApp({ initialDemo = false }: { initialDemo?: boolean }) 
             </div>
             <div className={`analysis-status ${analysis.dataStatus}`}>
               {analysis.dataStatus === "live" ? <Database size={15} /> : <AlertCircle size={15} />}
-              <span><strong>{analysis.dataStatus === "live" ? "Live analysis" : "Demo snapshot"}</strong><br />{analysis.dataStatusMessage}</span>
+              <span><strong>{analysis.dataStatus === "live" ? "Live analysis" : "Demo snapshot"}</strong><br />{analysis.dataStatusMessage}<small>GBIF checked {new Date(analysis.sourceTimestamps.gbif).toLocaleString()} · Weather checked {new Date(analysis.sourceTimestamps.weather).toLocaleString()}</small></span>
             </div>
             <div className="climate-card">
               <div className="climate-card-top"><span>{analysis.climate.comparisonMonth} context</span><CloudSun size={17} /></div>

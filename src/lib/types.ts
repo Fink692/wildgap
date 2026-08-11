@@ -61,6 +61,10 @@ export interface HabitatAnalysis {
     radiusKm: number;
   };
   generatedAt: string;
+  sourceTimestamps: {
+    gbif: string;
+    weather: string;
+  };
   dataStatus: DataStatus;
   dataStatusMessage: string;
   rankingSuppressed: boolean;
