@@ -37,8 +37,10 @@ Open `http://localhost:3000`. No environment variables are required for the port
 
 ## Optional shared persistence
 
+The production database schema, owner index, RLS policies, and public client configuration are provisioned. Anonymous sign-ins are the only dashboard-controlled switch: until they are enabled, the deployed app safely falls back to its complete portable mission links.
+
 1. Create a free Supabase project.
-2. Run `supabase/migrations/202608100001_create_missions.sql` in its SQL editor.
+2. Apply both SQL files in `supabase/migrations/` in filename order.
 3. Enable anonymous sign-ins in Supabase Auth.
 4. Add `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` to `.env.local`.
 5. For public deployment, configure Cloudflare Turnstile as Supabase Auth CAPTCHA and add `NEXT_PUBLIC_TURNSTILE_SITE_KEY`.
