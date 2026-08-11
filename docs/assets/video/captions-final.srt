@@ -1,0 +1,59 @@
+1
+00:00:00,000 --> 00:00:04,000
+Nature data has blind spots.
+
+2
+00:00:04,000 --> 00:00:08,000
+WildGap finds where one more hour of looking could be useful.
+
+3
+00:00:08,000 --> 00:00:13,000
+Search any location. Choose a 2, 5, or 10 kilometre area.
+
+4
+00:00:13,000 --> 00:00:18,000
+Comparable H3 cells reveal uneven GBIF observation coverage.
+
+5
+00:00:18,000 --> 00:00:23,000
+Latest 12 completed months vs. the preceding 36-month baseline.
+
+6
+00:00:23,000 --> 00:00:27,500
+Low records are not a wildlife decline. They are a reason to look again.
+
+7
+00:00:27,500 --> 00:00:33,000
+55% density gap + 30% coverage change + 15% target gap.
+
+8
+00:00:33,000 --> 00:00:37,000
+When evidence is too thin, WildGap suppresses the ranking.
+
+9
+00:00:37,000 --> 00:00:42,000
+Open-Meteo adds climate context and seven-day field conditions.
+
+10
+00:00:42,000 --> 00:00:46,000
+Weather changes timing—not the biodiversity score.
+
+11
+00:00:46,000 --> 00:00:51,000
+Generate a printable, safe, 60-minute mission.
+
+12
+00:00:51,000 --> 00:00:55,000
+No sign-in. Missions stay on-device and travel in validated links.
+
+13
+00:00:55,000 --> 00:00:59,000
+A clearly labeled Winnipeg demo keeps judging outage-safe.
+
+14
+00:00:59,000 --> 00:01:03,500
+Deployed product and technical verification—no field or tester claim.
+
+15
+00:01:03,500 --> 00:01:06,000
+Find where nature data is missing, then go look.

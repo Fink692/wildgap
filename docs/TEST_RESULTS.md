@@ -21,9 +21,9 @@ Use this sheet during the real sessions. Do not enter estimates or reconstructed
 - Independent application security scan: no high or critical findings; both medium findings fixed and regression-tested
 - GBIF request scheduling: all 38 recent/prior cell-window comparisons retained, with a tested maximum of six concurrent occurrence searches and bounded retry of 429/502/503/504 responses
 
-These technical checks do not replace the independent usability sessions or physical field pilot below.
+These technical checks are the only evidence claimed by this submission. No independent usability result or physical field outing is claimed.
 
-## Winnipeg field mission
+## Optional future Winnipeg field mission — not part of the submission
 
 - Date and start time:
 - Public, permitted site:
@@ -36,7 +36,7 @@ These technical checks do not replace the independent usability sessions or phys
 - Number of observations linked:
 - Safety or protocol deviations:
 
-## Tester 1
+## Optional future tester 1 — not part of the submission
 
 - Date:
 - Start-to-mission time:
@@ -46,7 +46,7 @@ These technical checks do not replace the independent usability sessions or phys
 - Main hesitation:
 - Expected but could not find:
 
-## Tester 2
+## Optional future tester 2 — not part of the submission
 
 - Date:
 - Start-to-mission time:

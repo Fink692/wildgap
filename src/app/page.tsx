@@ -3,7 +3,6 @@ import {
   Binoculars,
   CalendarCheck,
   Check,
-  CircleDashed,
   CloudSun,
   Database,
   Gauge,
@@ -99,17 +98,17 @@ export default function Home() {
       <section className="section case-study">
         <div className="shell pilot-grid">
           <div className="pilot-copy">
-            <p className="eyebrow light">Winnipeg pilot</p>
+            <p className="eyebrow light">Winnipeg demo</p>
             <h2>Built locally.<br />Useful globally.</h2>
-            <p>Winnipeg is the launch site for the first documented field loop. The software is ready now; physical survey and independent tester evidence will be added only after they happen.</p>
-            <a className="button button-cream" href="/explore?demo=1">Open pilot analysis <ArrowRight size={17} /></a>
+            <p>The timestamped Winnipeg snapshot makes the full product flow reviewable during third-party outages. This submission claims deployed software and technical verification—not a completed Winnipeg outing or independent human study.</p>
+            <a className="button button-cream" href="/explore?demo=1">Open demo analysis <ArrowRight size={17} /></a>
           </div>
-          <div className="pilot-status" aria-label="Winnipeg pilot status">
-            <p className="pilot-status-title">Evidence ledger</p>
+          <div className="pilot-status" aria-label="Winnipeg demo status">
+            <p className="pilot-status-title">Verification ledger</p>
             <div className="status-row complete"><Check size={18} /><span><strong>Analysis built</strong><small>Timestamped Winnipeg snapshot and live retry</small></span><b>Ready</b></div>
             <div className="status-row complete"><Check size={18} /><span><strong>Mission protocol</strong><small>Printable, shareable 60-minute field card</small></span><b>Ready</b></div>
-            <div className="status-row pending"><CircleDashed size={18} /><span><strong>Field observation</strong><small>Public evidence link after the first outing</small></span><b>Pending</b></div>
-            <div className="status-row pending"><CircleDashed size={18} /><span><strong>Two usability tests</strong><small>Uncoached, timed and documented</small></span><b>Pending</b></div>
+            <div className="status-row complete"><Check size={18} /><span><strong>Technical checks</strong><small>Scoring, APIs, sharing and production flow verified</small></span><b>Passed</b></div>
+            <div className="status-row complete"><Check size={18} /><span><strong>Evidence boundary</strong><small>No field outing or human tester results claimed</small></span><b>Clear</b></div>
           </div>
         </div>
       </section>

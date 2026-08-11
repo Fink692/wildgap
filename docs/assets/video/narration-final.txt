@@ -1,0 +1,17 @@
+Nature data has blind spots. WildGap helps citizen scientists find where one more hour of looking could be useful.
+
+Search any location and choose a two, five, or ten kilometre area. WildGap covers it with comparable H3 cells, then queries coordinate-valid biodiversity observations from GBIF.
+
+It compares the latest twelve completed months with the preceding thirty-six-month baseline. A low record count is never called a wildlife decline. It is a reason to look again.
+
+The survey-priority score is transparent: fifty-five percent density gap, thirty percent coverage change, and fifteen percent target-group gap. When the evidence is too thin, WildGap suppresses the ranking.
+
+Open-Meteo adds recent climate context and ranks the next seven days for comfortable field conditions. Weather helps choose when to survey; it never changes the biodiversity score.
+
+Choose a cell and generate a printable sixty-minute mission with a target group, safety checks, readiness steps, and an optional evidence link.
+
+There is no sign-in. Missions stay on the device and travel in validated portable links. The Winnipeg demo snapshot is clearly labeled for outage-safe judging.
+
+WildGap is built with Next.js, TypeScript, MapLibre, H3, GBIF, and Open-Meteo. This submission claims deployed product functionality and technical verification, not a completed field outing or human usability study.
+
+WildGap. Find where nature data is missing, then go look.

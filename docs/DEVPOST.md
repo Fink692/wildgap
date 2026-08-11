@@ -45,15 +45,15 @@ Environmental technology earns trust by making uncertainty legible. The most use
 
 ## What is next
 
-Partner with school eco-clubs, validate target-group protocols with local naturalists, add optional eBird/iNaturalist submission integrations, and evaluate whether completed missions measurably improve spatiotemporal coverage.
+Community users can run WildGap missions in permitted public locations and, if they choose, add observation evidence. Future work can validate target-group protocols with local naturalists, add optional eBird/iNaturalist integrations, and evaluate whether repeat use improves spatiotemporal coverage. No Winnipeg field mission is part of this submission.
 
 ## Before submitting
 
 - [x] Add final live URL and public GitHub URL
-- [ ] Complete the Winnipeg pilot and link evidence
-- [ ] Add two tester results without inventing quotes
-- [ ] Upload the 2:45 demo video
-- [ ] Add project thumbnail and screenshots
+- [x] State clearly that no field or tester results are claimed
+- [x] Export and verify the 66-second product video
+- [x] Add the Devpost project thumbnail
+- [x] Prepare current desktop and mobile screenshots
 - [ ] Confirm all team, eligibility and side-prize fields
 - [ ] Verify attribution and repository access in a logged-out browser
 
@@ -65,4 +65,4 @@ Partner with school eco-clubs, validate target-group protocols with local natura
 - `assets/screenshots/explorer-desktop.png`
 - `assets/screenshots/explorer-mobile.png`
 - `assets/screenshots/mission-desktop.png`
-- `assets/video/wildgap-pre-pilot.mp4` — truthful pre-pilot cut; replace its proof segment after the real sessions
+- `assets/video/wildgap-final.mp4` — final 66-second product cut with no field/tester claim

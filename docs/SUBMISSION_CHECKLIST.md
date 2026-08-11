@@ -7,12 +7,12 @@
 - [ ] Ask organizers to clarify build dates, eligibility wording, prize tracks, and post-deadline bug fixes.
 - [ ] Confirm the entrant and any teammates meet the published eligibility rules.
 
-## Evidence
+## Evidence boundary
 
-- [ ] Complete the Winnipeg field mission using `PILOT_PROTOCOL.md`.
-- [ ] Record verified results in `TEST_RESULTS.md`.
-- [ ] Run two uncoached usability sessions and record their measured times.
-- [ ] Add only public, non-sensitive evidence URLs.
+- [x] Claim deployed functionality and technical verification only.
+- [x] State that no Winnipeg field mission is part of the submission.
+- [x] Leave human tester results unclaimed rather than inventing evidence.
+- [x] Keep any future evidence URL optional, public, and non-sensitive.
 
 ## Account-free production controls
 
@@ -22,16 +22,16 @@
 
 ## Final media
 
-- [ ] Replace the proof placeholders in `VIDEO_SCRIPT.md` with verified facts.
-- [ ] Record or replace the proof segment with the real outing and tester evidence.
-- [ ] Verify captions, audio, and the exported H.264 video.
-- [ ] Capture current desktop and mobile screenshots from the production deployment.
+- [x] Replace the pre-pilot script with a product-only, evidence-safe cut.
+- [x] Export a 66-second product cut with no field or tester claim.
+- [x] Verify captions, audio, H.264 video, frame rate, aspect ratio, and representative frames.
+- [x] Capture current desktop and mobile screenshots from the production deployment.
 
 ## Devpost
 
-- [ ] Add the production URL and public repository URL.
-- [ ] Upload the final video, thumbnail, screenshots, and architecture image.
-- [ ] Paste and proofread `DEVPOST.md`.
-- [ ] Verify all data/API attribution and the MIT license.
-- [ ] Test every link in a logged-out browser.
-- [ ] Submit several hours before August 30, 2026 at 11:45 PM CDT.
+- [x] Add the production URL and public repository URL.
+- [x] Upload the Devpost project thumbnail and prepare the video, screenshots, and architecture image.
+- [x] Paste and proofread the final Devpost story.
+- [x] Verify all data/API attribution and the MIT license.
+- [x] Test the public submission and links in a logged-out browser.
+- [x] Submit before August 30, 2026 at 11:45 PM CDT.

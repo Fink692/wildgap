@@ -83,12 +83,12 @@ pnpm build
 ## Submission materials
 
 - [`docs/DEVPOST.md`](docs/DEVPOST.md) — prepared submission write-up
-- [`docs/VIDEO_SCRIPT.md`](docs/VIDEO_SCRIPT.md) — 2:45 demo script and shot list
-- [`docs/PILOT_PROTOCOL.md`](docs/PILOT_PROTOCOL.md) — real outing and tester checklist
-- [`docs/TEST_RESULTS.md`](docs/TEST_RESULTS.md) — blank evidence sheet for verified results
+- [`docs/VIDEO_SCRIPT.md`](docs/VIDEO_SCRIPT.md) — final 66-second product-cut guide
+- [`docs/PILOT_PROTOCOL.md`](docs/PILOT_PROTOCOL.md) — optional future outing and tester protocol
+- [`docs/TEST_RESULTS.md`](docs/TEST_RESULTS.md) — technical verification record and intentionally blank future field sections
 - [`docs/SUBMISSION_CHECKLIST.md`](docs/SUBMISSION_CHECKLIST.md) — final operations checklist
 - [`docs/OUTREACH.md`](docs/OUTREACH.md) — ethical public-voting copy
-- [`docs/assets/video/wildgap-pre-pilot.mp4`](docs/assets/video/wildgap-pre-pilot.mp4) — narrated, captioned 2:44 pre-pilot cut
+- [`docs/assets/video/wildgap-final.mp4`](docs/assets/video/wildgap-final.mp4) — narrated, captioned 66-second final product cut
 - [`docs/assets/architecture.svg`](docs/assets/architecture.svg) and [`docs/assets/screenshots`](docs/assets/screenshots) — upload-ready visuals
 - `/opengraph-image` — generated 1200×630 social card
 
