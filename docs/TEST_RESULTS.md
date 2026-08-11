@@ -5,12 +5,13 @@ Use this sheet during the real sessions. Do not enter estimates or reconstructed
 ## Automated and product verification — August 10, 2026
 
 - TypeScript typecheck: passed
-- Unit, API contract and database-policy contract tests: 20/20 passed
+- Unit, API contract and database-policy contract tests: 22/22 passed
 - Production build: passed
 - Production deployment: passed at `https://wildgap-habitat-2026.fink692.chatgpt.site`
 - Winnipeg demo API: 200, 19 cells, 3 survey windows, labeled snapshot
 - Uncached Winnipeg live API after concurrency tuning: 200, 19 cells, 9.07 seconds; progressive status shown throughout
 - Uncached Saskatoon live API after rate-limit hardening: 200, 19 cells, 23.25 seconds; recovered from a transient upstream 503 while the progressive status remained active
+- Complete-analysis cache verification: identical 19-cell request improved from 17.02 seconds live to 0.01 seconds cached, with explicit `MISS` then `HIT` response markers
 - Global geocoding: verified with London, UK/Canada/US results
 - End-to-end: demo → candidate → portable mission → evidence URL → completion passed
 - Responsive checks: 390×844 and 1280×800 passed

@@ -14,5 +14,6 @@ describe("GET /api/analysis", () => {
     expect(response.status).toBe(200);
     expect(payload.dataStatus).toBe("demo-snapshot");
     expect(payload.cells).toHaveLength(19);
+    expect(response.headers.get("X-WildGap-Cache")).toBe("SNAPSHOT");
   });
 });

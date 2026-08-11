@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { analysisCacheKey, getCachedAnalysis, setCachedAnalysis } from "@/lib/analysis-cache";
 import { buildWinnipegSnapshot } from "@/lib/demo-snapshot";
 import { buildLiveAnalysis, isNearWinnipeg } from "@/lib/environmental-data";
 import { acquireLiveAnalysis, checkRateLimit, clientKey, releaseLiveAnalysis } from "@/lib/rate-limit";
@@ -26,7 +27,16 @@ export async function GET(request: NextRequest) {
 
   if (forceDemo && isNearWinnipeg(latitude, longitude)) {
     return Response.json(buildWinnipegSnapshot(radiusKm), {
-      headers: { "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400" },
+      headers: { "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400", "X-WildGap-Cache": "SNAPSHOT" },
+    });
+  }
+
+  const analysisInput = { latitude, longitude, radiusKm, label };
+  const cacheKey = analysisCacheKey(analysisInput);
+  const cached = getCachedAnalysis(cacheKey);
+  if (cached) {
+    return Response.json(cached, {
+      headers: { "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400", "X-WildGap-Cache": "HIT" },
     });
   }
 
@@ -45,9 +55,10 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const analysis = await buildLiveAnalysis({ latitude, longitude, radiusKm, label });
+    const analysis = await buildLiveAnalysis(analysisInput);
+    setCachedAnalysis(cacheKey, analysis);
     return Response.json(analysis, {
-      headers: { "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400" },
+      headers: { "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400", "X-WildGap-Cache": "MISS" },
     });
   } catch (error) {
     console.error("WildGap live analysis failed", error);
