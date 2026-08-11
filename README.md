@@ -45,6 +45,14 @@ The production database schema, owner index, RLS policies, and public client con
 4. Add `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` to `.env.local`.
 5. For public deployment, configure Cloudflare Turnstile as Supabase Auth CAPTCHA and add `NEXT_PUBLIC_TURNSTILE_SITE_KEY`.
 
+After enabling anonymous sign-ins, verify the real authentication and RLS path with:
+
+```bash
+pnpm test:supabase
+```
+
+The check creates two temporary anonymous sessions, proves owner-only mutation and private-row isolation, and deletes its temporary mission row.
+
 Without Supabase, missions stay in local storage and the complete mission payload is embedded in the share URL. This is an intentional resilient fallback, not silent data loss.
 
 ## Scoring method
