@@ -130,32 +130,38 @@ export function ExplorerApp({ initialDemo = false }: { initialDemo?: boolean }) 
   async function createMission(cell: HabitatCell) {
     if (!analysis) return;
     setCreatingMission(true);
-    const mission: Mission = {
-      id: crypto.randomUUID(),
-      areaLabel: analysis.area.label,
-      latitude: cell.center[1],
-      longitude: cell.center[0],
-      h3Cell: cell.id,
-      polygon: cell.polygon,
-      targetTaxon: cell.targetTaxon,
-      analysisSnapshot: {
-        gapScore: cell.gapScore,
-        confidence: cell.confidence,
-        explanation: cell.explanation,
-        dataStatus: analysis.dataStatus,
-        generatedAt: analysis.generatedAt,
-        metrics: cell.metrics,
-      },
-      surveyWindow: analysis.surveyWindows.find((window) => window.date === scheduledDate),
-      scheduledDate,
-      durationMinutes: 60,
-      status: "planned",
-      isPublic: true,
-      createdAt: new Date().toISOString(),
-    };
-    const result = await persistMission(mission, captchaToken);
-    const encoded = encodeMission(result.mission);
-    window.location.assign(`/missions/${mission.id}?data=${encoded}`);
+    setError("");
+    try {
+      const mission: Mission = {
+        id: crypto.randomUUID(),
+        areaLabel: analysis.area.label,
+        latitude: cell.center[1],
+        longitude: cell.center[0],
+        h3Cell: cell.id,
+        polygon: cell.polygon,
+        targetTaxon: cell.targetTaxon,
+        analysisSnapshot: {
+          gapScore: cell.gapScore,
+          confidence: cell.confidence,
+          explanation: cell.explanation,
+          dataStatus: analysis.dataStatus,
+          generatedAt: analysis.generatedAt,
+          metrics: cell.metrics,
+        },
+        surveyWindow: analysis.surveyWindows.find((window) => window.date === scheduledDate),
+        scheduledDate,
+        durationMinutes: 60,
+        status: "planned",
+        isPublic: true,
+        createdAt: new Date().toISOString(),
+      };
+      const result = await persistMission(mission, captchaToken);
+      const encoded = encodeMission(result.mission);
+      window.location.assign(`/missions/${mission.id}?data=${encoded}`);
+    } catch {
+      setError("The mission could not be saved on this device. Please retry.");
+      setCreatingMission(false);
+    }
   }
 
   return (

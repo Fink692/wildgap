@@ -2,6 +2,7 @@
 
 import { createBrowserClient } from "@supabase/ssr";
 import type { Mission } from "@/lib/types";
+import { parseMission } from "@/lib/mission-validation";
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
@@ -32,8 +33,8 @@ function toRow(mission: Mission) {
   };
 }
 
-function fromRow(row: Record<string, unknown>): Mission {
-  return {
+function fromRow(row: Record<string, unknown>, expectedId?: string): Mission | null {
+  return parseMission({
     id: String(row.id),
     ownerId: row.owner_id ? String(row.owner_id) : undefined,
     areaLabel: String(row.area_label),
@@ -50,20 +51,25 @@ function fromRow(row: Record<string, unknown>): Mission {
     isPublic: Boolean(row.is_public),
     createdAt: String(row.created_at),
     completedAt: row.completed_at ? String(row.completed_at) : undefined,
-  };
+  }, expectedId);
 }
 
 export function localMission(id: string) {
   try {
     const value = localStorage.getItem(`wildgap:mission:${id}`);
-    return value ? (JSON.parse(value) as Mission) : null;
+    return value ? parseMission(JSON.parse(value), id) : null;
   } catch {
     return null;
   }
 }
 
 export function storeMissionLocally(mission: Mission) {
-  localStorage.setItem(`wildgap:mission:${mission.id}`, JSON.stringify(mission));
+  try {
+    localStorage.setItem(`wildgap:mission:${mission.id}`, JSON.stringify(mission));
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 export async function persistMission(mission: Mission, captchaToken?: string) {
@@ -93,7 +99,7 @@ export async function fetchPublicMission(id: string) {
   if (!supabase) return null;
   const { data, error } = await supabase.from("missions").select("*").eq("id", id).maybeSingle();
   if (error || !data) return null;
-  return fromRow(data as Record<string, unknown>);
+  return fromRow(data as Record<string, unknown>, id);
 }
 
 export async function completeStoredMission(mission: Mission) {

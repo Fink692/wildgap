@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { buildWinnipegSnapshot } from "@/lib/demo-snapshot";
 import { buildLiveAnalysis, isNearWinnipeg } from "@/lib/environmental-data";
+import { acquireLiveAnalysis, checkRateLimit, clientKey, releaseLiveAnalysis } from "@/lib/rate-limit";
 
 export const maxDuration = 60;
 
@@ -29,6 +30,20 @@ export async function GET(request: NextRequest) {
     });
   }
 
+  const admission = checkRateLimit("analysis", clientKey(request), 6, 60_000);
+  if (!admission.allowed) {
+    return Response.json(
+      { error: "Too many live analyses from this connection. Please wait and retry." },
+      { status: 429, headers: { "Retry-After": String(admission.retryAfterSeconds), "Cache-Control": "private, no-store" } },
+    );
+  }
+  if (!acquireLiveAnalysis()) {
+    return Response.json(
+      { error: "WildGap is already processing several live analyses. Please retry shortly." },
+      { status: 503, headers: { "Retry-After": "10", "Cache-Control": "private, no-store" } },
+    );
+  }
+
   try {
     const analysis = await buildLiveAnalysis({ latitude, longitude, radiusKm, label });
     return Response.json(analysis, {
@@ -51,5 +66,7 @@ export async function GET(request: NextRequest) {
       },
       { status: 503, headers: { "Retry-After": "30" } },
     );
+  } finally {
+    releaseLiveAnalysis();
   }
 }

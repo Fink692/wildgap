@@ -31,7 +31,8 @@ async function fetchJson<T>(url: string, revalidate: number): Promise<T> {
     if (response.ok) return (await response.json()) as T;
     if (response.status === 429 && attempt < 2) {
       const retryAfter = Number(response.headers.get("retry-after") ?? 0);
-      await new Promise<void>((resolve) => setTimeout(resolve, Math.max(retryAfter * 1_000, 600 * (attempt + 1))));
+      const delayMs = Math.min(Math.max(Number.isFinite(retryAfter) ? retryAfter * 1_000 : 0, 600 * (attempt + 1)), 2_000);
+      await new Promise<void>((resolve) => setTimeout(resolve, delayMs));
       continue;
     }
     throw new Error(`Upstream request failed (${response.status})`);

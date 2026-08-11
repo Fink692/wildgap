@@ -1,10 +1,18 @@
 import { NextRequest } from "next/server";
 import type { GeocodeResult } from "@/lib/types";
+import { checkRateLimit, clientKey } from "@/lib/rate-limit";
 
 export async function GET(request: NextRequest) {
   const query = request.nextUrl.searchParams.get("q")?.trim() ?? "";
   if (query.length < 2 || query.length > 100) {
     return Response.json({ error: "Enter between 2 and 100 characters." }, { status: 400 });
+  }
+  const admission = checkRateLimit("geocode", clientKey(request), 30, 60_000);
+  if (!admission.allowed) {
+    return Response.json(
+      { error: "Too many location searches. Please wait and retry." },
+      { status: 429, headers: { "Retry-After": String(admission.retryAfterSeconds), "Cache-Control": "private, no-store" } },
+    );
   }
   try {
     const upstream = await fetch(

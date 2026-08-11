@@ -22,7 +22,10 @@ import {
 } from "lucide-react";
 import { completeStoredMission, fetchPublicMission, localMission, storeMissionLocally } from "@/lib/mission-store";
 import { decodeMission, encodeMission } from "@/lib/portable-mission";
+import { safeEvidenceUrl } from "@/lib/mission-validation";
 import type { Mission } from "@/lib/types";
+
+type MissionSource = "local" | "portable" | "public";
 
 function humanDate(value: string) {
   return new Intl.DateTimeFormat("en", { weekday: "long", month: "long", day: "numeric", year: "numeric", timeZone: "UTC" }).format(new Date(`${value}T12:00:00Z`));
@@ -38,18 +41,21 @@ export function MissionView({ missionId }: { missionId: string }) {
   const [evidenceUrl, setEvidenceUrl] = useState("");
   const [shareLabel, setShareLabel] = useState("Share");
   const [error, setError] = useState("");
+  const [missionSource, setMissionSource] = useState<MissionSource>();
 
   useEffect(() => {
     let active = true;
     async function load() {
       const local = localMission(missionId);
       const encoded = new URL(window.location.href).searchParams.get("data");
-      const portable = encoded ? decodeMission(encoded) : null;
-      const remote = local || portable ? null : await fetchPublicMission(missionId);
-      const loaded = local ?? portable ?? remote;
-      if (loaded) storeMissionLocally(loaded);
+      const portable = encoded ? decodeMission(encoded, missionId) : null;
+      const remote = await fetchPublicMission(missionId);
+      const loaded = remote ?? local ?? portable;
+      const source: MissionSource | undefined = remote ? "public" : local ? "local" : portable ? "portable" : undefined;
+      if (loaded && source !== "portable") storeMissionLocally(loaded);
       if (active) {
         setMission(loaded);
+        setMissionSource(source);
         setEvidenceUrl(loaded?.evidenceUrl ?? "");
       }
     }
@@ -81,7 +87,7 @@ export function MissionView({ missionId }: { missionId: string }) {
     event.preventDefault();
     if (!mission) return;
     if (evidenceUrl) {
-      try { new URL(evidenceUrl); } catch { setError("Enter a complete evidence URL, including https://"); return; }
+      if (!safeEvidenceUrl(evidenceUrl)) { setError("Enter a complete http:// or https:// evidence URL."); return; }
     }
     const completed: Mission = {
       ...mission,
@@ -106,7 +112,7 @@ export function MissionView({ missionId }: { missionId: string }) {
     <main className="mission-page" id="main-content">
       <div className="mission-shell">
         <div className="mission-toolbar">
-          <p>{mission.analysisSnapshot.dataStatus === "live" ? "Created from live data" : "Created from a labeled demo snapshot"}</p>
+          <p>{missionSource === "portable" ? "Portable mission data · verify the location and access before going" : missionSource === "public" ? "Public mission record · verify the location and access before going" : mission.analysisSnapshot.dataStatus === "live" ? "Saved on this device from live analysis" : "Saved on this device from a labeled demo snapshot"}</p>
           <div className="mission-toolbar-actions">
             <button className="icon-button" onClick={() => window.print()} aria-label="Print mission"><Printer size={17} /></button>
             <button className="button button-dark button-small" onClick={() => void shareMission()}><Link2 size={15} /><span aria-live="polite">{shareLabel}</span></button>
