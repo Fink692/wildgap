@@ -37,6 +37,7 @@ The hardest problem was scientific restraint. Opportunistic occurrence records c
 - A printable 60-minute protocol with weather, safety and readiness checks
 - Honest failure behavior: a clearly labeled Winnipeg snapshot or a retryable error, never silent estimates
 - Shareable missions that remain functional without an account
+- Production row-level security with least-privilege database grants and a portable fallback
 
 ## What we learned
 
@@ -55,6 +56,7 @@ Partner with school eco-clubs, validate target-group protocols with local natura
 - [ ] Add project thumbnail and screenshots
 - [ ] Confirm all team, eligibility and side-prize fields
 - [ ] Verify attribution and repository access in a logged-out browser
+- [ ] Enable the prepared anonymous-auth CAPTCHA configuration and run the two-user RLS smoke test
 
 ## Prepared upload assets
 

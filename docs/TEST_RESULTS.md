@@ -5,14 +5,21 @@ Use this sheet during the real sessions. Do not enter estimates or reconstructed
 ## Automated and product verification — August 10, 2026
 
 - TypeScript typecheck: passed
-- Unit and API contract tests: 10/10 passed
+- Unit, API contract and database-policy contract tests: 19/19 passed
 - Production build: passed
+- Production deployment: passed at `https://wildgap-habitat-2026.fink692.chatgpt.site`
 - Winnipeg demo API: 200, 19 cells, 3 survey windows, labeled snapshot
 - Uncached Winnipeg live API after concurrency tuning: 200, 19 cells, 9.07 seconds; progressive status shown throughout
 - Global geocoding: verified with London, UK/Canada/US results
 - End-to-end: demo → candidate → portable mission → evidence URL → completion passed
 - Responsive checks: 390×844 and 1280×800 passed
 - Browser console after final navigation check: no new errors
+- Supabase production schema: three migrations applied; RLS enabled; anonymous role limited to reads and authenticated role limited to mission CRUD
+- Supabase security advisor: no findings; unauthenticated REST insert rejected with 401
+- Independent application security scan: no high or critical findings; both medium findings fixed and regression-tested
+- Cloudflare Turnstile: managed widget created for the exact production hostname; activation intentionally awaits the Supabase Auth CAPTCHA setting
+
+The live two-user Supabase isolation smoke test is ready as `pnpm test:supabase`. It must be run after anonymous sign-ins are enabled in the project dashboard.
 
 These technical checks do not replace the independent usability sessions or physical field pilot below.
 

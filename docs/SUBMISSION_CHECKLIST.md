@@ -14,6 +14,13 @@
 - [ ] Run two uncoached usability sessions and record their measured times.
 - [ ] Add only public, non-sensitive evidence URLs.
 
+## Production controls
+
+- [x] Apply the production mission schema and row-level security policies.
+- [x] Restrict anonymous database access to public reads; require an authenticated owner for writes.
+- [x] Create the production Turnstile widget for the deployed hostname.
+- [ ] Enable anonymous sign-ins and Turnstile CAPTCHA in Supabase Auth, then run `pnpm test:supabase`.
+
 ## Final media
 
 - [ ] Replace the proof placeholders in `VIDEO_SCRIPT.md` with verified facts.
