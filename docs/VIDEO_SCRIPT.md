@@ -34,7 +34,7 @@
 
 **Picture:** Architecture diagram, mobile view, portable link in a private browser.
 
-“The stack combines Next.js, TypeScript, H3, MapLibre, GBIF, Open-Meteo and optional Supabase RLS. Portable links keep the main experience working without an account, and a clearly labeled Winnipeg snapshot protects the demo from upstream outages.”
+“The stack combines Next.js, TypeScript, H3, MapLibre, GBIF and Open-Meteo. Missions stay on-device and travel in validated portable links, so the complete experience needs no sign-in or mission database. A clearly labeled Winnipeg snapshot protects the demo from upstream outages.”
 
 ## 2:30–2:45 — Close
 

@@ -102,7 +102,6 @@ export function parseMission(value: unknown, expectedId?: string): Mission | nul
   if (!source) return null;
 
   const id = boundedString(source.id, 80);
-  const ownerId = source.ownerId === undefined ? undefined : boundedString(source.ownerId, 80);
   const areaLabel = boundedString(source.areaLabel, 160);
   const latitude = boundedNumber(source.latitude, -90, 90);
   const longitude = boundedNumber(source.longitude, -180, 180);
@@ -122,16 +121,14 @@ export function parseMission(value: unknown, expectedId?: string): Mission | nul
   const durationMinutes = integer(source.durationMinutes, 15, 240);
   const status = typeof source.status === "string" && MISSION_STATUS.has(source.status) ? source.status as Mission["status"] : null;
   const evidenceUrl = source.evidenceUrl === undefined ? undefined : safeEvidenceUrl(source.evidenceUrl);
-  const isPublic = typeof source.isPublic === "boolean" ? source.isPublic : null;
   const createdAt = isoTimestamp(source.createdAt);
   const completedAt = source.completedAt === undefined ? undefined : isoTimestamp(source.completedAt);
 
-  if (!id || (expectedId && id !== expectedId) || (source.ownerId !== undefined && !ownerId) || !areaLabel || latitude === null || longitude === null || !h3Cell || !missionPolygon || !targetTaxon || !analysis || !gapScoreValid || !confidence || !explanation || !dataStatus || !generatedAt || (analysis.metrics !== undefined && !metrics) || (source.surveyWindow !== undefined && !window) || !scheduledDate || durationMinutes === null || !status || (source.evidenceUrl !== undefined && !evidenceUrl) || isPublic === null || !createdAt || (source.completedAt !== undefined && !completedAt)) return null;
+  if (!id || (expectedId && id !== expectedId) || !areaLabel || latitude === null || longitude === null || !h3Cell || !missionPolygon || !targetTaxon || !analysis || !gapScoreValid || !confidence || !explanation || !dataStatus || !generatedAt || (analysis.metrics !== undefined && !metrics) || (source.surveyWindow !== undefined && !window) || !scheduledDate || durationMinutes === null || !status || (source.evidenceUrl !== undefined && !evidenceUrl) || !createdAt || (source.completedAt !== undefined && !completedAt)) return null;
   if (status === "completed" && !completedAt) return null;
 
   return {
     id,
-    ownerId: ownerId ?? undefined,
     areaLabel,
     latitude,
     longitude,
@@ -144,7 +141,6 @@ export function parseMission(value: unknown, expectedId?: string): Mission | nul
     durationMinutes,
     status,
     evidenceUrl: evidenceUrl ?? undefined,
-    isPublic,
     createdAt,
     completedAt: completedAt ?? undefined,
   };

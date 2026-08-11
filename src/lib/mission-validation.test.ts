@@ -39,7 +39,6 @@ const mission: Mission = {
   scheduledDate: "2026-08-12",
   durationMinutes: 60,
   status: "planned",
-  isPublic: true,
   createdAt: "2026-08-10T18:05:00.000Z",
 };
 

@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
   <title id="title">WildGap architecture</title>
-  <desc id="desc">Citizen scientists use a Next.js explorer which calls H3, GBIF and Open-Meteo analysis, then creates portable or Supabase-backed missions.</desc>
+  <desc id="desc">Citizen scientists use a Next.js explorer which calls H3, GBIF and Open-Meteo analysis, then creates account-free portable missions.</desc>
   <rect width="1600" height="900" fill="#f7f3e8"/>
   <text x="100" y="105" fill="#173f35" font-family="Georgia,serif" font-size="60">WildGap architecture</text>
   <text x="100" y="155" fill="#5e6f68" font-family="Arial,sans-serif" font-size="24">Transparent geospatial analysis → one useful field action</text>
@@ -51,7 +51,7 @@
     <g transform="translate(430 700)">
       <rect width="520" height="125" rx="24" fill="#fff" stroke="#c9d1c9" stroke-width="3"/>
       <text x="34" y="52" fill="#173f35" font-size="26" font-weight="700">Shareable 60-minute mission</text>
-      <text x="34" y="91" fill="#5e6f68" font-size="20">Portable URL/local storage · optional Supabase RLS</text>
+      <text x="34" y="91" fill="#5e6f68" font-size="20">No sign-in · portable URL + local storage</text>
     </g>
   </g>
   <defs>

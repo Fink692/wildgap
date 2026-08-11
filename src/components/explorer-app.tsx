@@ -1,7 +1,6 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
-import { Turnstile } from "@marsidev/react-turnstile";
 import {
   AlertCircle,
   ArrowRight,
@@ -53,7 +52,6 @@ export function ExplorerApp({ initialDemo = false }: { initialDemo?: boolean }) 
   const [error, setError] = useState("");
   const [scheduledDate, setScheduledDate] = useState("");
   const [mountedDemo, setMountedDemo] = useState(false);
-  const [captchaToken, setCaptchaToken] = useState<string>();
   const [creatingMission, setCreatingMission] = useState(false);
 
   const selectedCell = analysis?.cells.find((cell) => cell.id === selectedCellId);
@@ -153,11 +151,10 @@ export function ExplorerApp({ initialDemo = false }: { initialDemo?: boolean }) 
         scheduledDate,
         durationMinutes: 60,
         status: "planned",
-        isPublic: true,
         createdAt: new Date().toISOString(),
       };
-      const result = await persistMission(mission, captchaToken);
-      const encoded = encodeMission(result.mission);
+      const savedMission = persistMission(mission);
+      const encoded = encodeMission(savedMission);
       window.location.assign(`/missions/${mission.id}?data=${encoded}`);
     } catch {
       setError("The mission could not be saved on this device. Please retry.");
@@ -269,10 +266,7 @@ export function ExplorerApp({ initialDemo = false }: { initialDemo?: boolean }) 
                   {analysis.surveyWindows.map((window) => <option key={window.date} value={window.date}>{dateLabel(window.date)} · {window.label} ({window.temperatureMaxC}°C, {window.precipitationProbability}% rain)</option>)}
                 </select>
               </label>
-              {process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && (
-                <Turnstile siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} onSuccess={setCaptchaToken} options={{ size: "flexible", theme: "light" }} />
-              )}
-              <button className="button button-primary" disabled={creatingMission || Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && !captchaToken)} onClick={() => void createMission(selectedCell)}>
+              <button className="button button-primary" disabled={creatingMission} onClick={() => void createMission(selectedCell)}>
                 {creatingMission ? <><span className="spinner" /> Saving mission…</> : <>Create 60-minute mission <ArrowRight size={17} /></>}
               </button>
             </div>

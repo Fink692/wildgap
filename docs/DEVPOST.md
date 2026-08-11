@@ -21,8 +21,8 @@ WildGap deliberately does **not** claim that fewer observations mean fewer anima
 - H3 adaptive spatial indexing
 - GBIF occurrence and taxonomic APIs
 - Open-Meteo geocoding, historical weather and forecast APIs
-- Optional Supabase anonymous auth and Postgres RLS
-- Portable mission payloads for a no-account, outage-resistant fallback
+- Validated portable mission payloads and device-local storage
+- A fully account-free, outage-resistant mission workflow
 
 ## Challenges
 
@@ -36,8 +36,8 @@ The hardest problem was scientific restraint. Opportunistic occurrence records c
 - Score components exposed in both the explorer and field card
 - A printable 60-minute protocol with weather, safety and readiness checks
 - Honest failure behavior: a clearly labeled Winnipeg snapshot or a retryable error, never silent estimates
-- Shareable missions that remain functional without an account
-- Production row-level security with least-privilege database grants and a portable fallback
+- Shareable missions that require no sign-in, account, or mission database
+- A smaller privacy surface: mission history stays on-device and complete links carry only the field-card data a user chooses to share
 
 ## What we learned
 
@@ -56,7 +56,6 @@ Partner with school eco-clubs, validate target-group protocols with local natura
 - [ ] Add project thumbnail and screenshots
 - [ ] Confirm all team, eligibility and side-prize fields
 - [ ] Verify attribution and repository access in a logged-out browser
-- [ ] Enable the prepared anonymous-auth CAPTCHA configuration and run the two-user RLS smoke test
 
 ## Prepared upload assets
 

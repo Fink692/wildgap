@@ -5,7 +5,7 @@ Use this sheet during the real sessions. Do not enter estimates or reconstructed
 ## Automated and product verification — August 10, 2026
 
 - TypeScript typecheck: passed
-- Unit, API contract and database-policy contract tests: 22/22 passed
+- Unit and API contract tests: 20/20 passed
 - Production build: passed
 - Production deployment: passed at `https://wildgap-habitat-2026.fink692.chatgpt.site`
 - Winnipeg demo API: 200, 19 cells, 3 survey windows, labeled snapshot
@@ -16,13 +16,10 @@ Use this sheet during the real sessions. Do not enter estimates or reconstructed
 - End-to-end: demo → candidate → portable mission → evidence URL → completion passed
 - Responsive checks: 390×844 and 1280×800 passed
 - Browser console after final navigation check: no new errors
-- Supabase production schema: three migrations applied; RLS enabled; anonymous role limited to reads and authenticated role limited to mission CRUD
-- Supabase security advisor: no findings; unauthenticated REST insert rejected with 401
+- Account-free mission architecture: no authentication client, user session, or mission database is required
+- Portable mission boundary: payload length, route-ID binding, field ranges, and evidence URL schemes are validated before storage
 - Independent application security scan: no high or critical findings; both medium findings fixed and regression-tested
-- Cloudflare Turnstile: managed widget created for the exact production hostname; activation intentionally awaits the Supabase Auth CAPTCHA setting
 - GBIF request scheduling: all 38 recent/prior cell-window comparisons retained, with a tested maximum of six concurrent occurrence searches and bounded retry of 429/502/503/504 responses
-
-The live two-user Supabase isolation smoke test is ready as `pnpm test:supabase`. It must be run after anonymous sign-ins are enabled in the project dashboard.
 
 These technical checks do not replace the independent usability sessions or physical field pilot below.
 

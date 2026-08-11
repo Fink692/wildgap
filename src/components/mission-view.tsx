@@ -20,12 +20,12 @@ import {
   ShieldAlert,
   WifiOff,
 } from "lucide-react";
-import { completeStoredMission, fetchPublicMission, localMission, storeMissionLocally } from "@/lib/mission-store";
+import { completeStoredMission, localMission, storeMissionLocally } from "@/lib/mission-store";
 import { decodeMission, encodeMission } from "@/lib/portable-mission";
 import { safeEvidenceUrl } from "@/lib/mission-validation";
 import type { Mission } from "@/lib/types";
 
-type MissionSource = "local" | "portable" | "public";
+type MissionSource = "local" | "portable";
 
 function humanDate(value: string) {
   return new Intl.DateTimeFormat("en", { weekday: "long", month: "long", day: "numeric", year: "numeric", timeZone: "UTC" }).format(new Date(`${value}T12:00:00Z`));
@@ -45,21 +45,20 @@ export function MissionView({ missionId }: { missionId: string }) {
 
   useEffect(() => {
     let active = true;
-    async function load() {
+    function load() {
       const local = localMission(missionId);
       const encoded = new URL(window.location.href).searchParams.get("data");
       const portable = encoded ? decodeMission(encoded, missionId) : null;
-      const remote = await fetchPublicMission(missionId);
-      const loaded = remote ?? local ?? portable;
-      const source: MissionSource | undefined = remote ? "public" : local ? "local" : portable ? "portable" : undefined;
-      if (loaded && source !== "portable") storeMissionLocally(loaded);
+      const loaded = local ?? portable;
+      const source: MissionSource | undefined = local ? "local" : portable ? "portable" : undefined;
+      if (portable && !local) storeMissionLocally(portable);
       if (active) {
         setMission(loaded);
         setMissionSource(source);
         setEvidenceUrl(loaded?.evidenceUrl ?? "");
       }
     }
-    void load();
+    load();
     return () => { active = false; };
   }, [missionId]);
 
@@ -97,14 +96,14 @@ export function MissionView({ missionId }: { missionId: string }) {
     };
     setMission(completed);
     setError("");
-    await completeStoredMission(completed);
+    completeStoredMission(completed);
     window.history.replaceState(null, "", portableUrl(completed));
   }
 
   if (mission === undefined) return <main className="mission-loading"><span className="spinner" aria-label="Loading mission" /></main>;
   if (mission === null) {
     return (
-      <main className="empty-state" id="main-content"><div><Binoculars size={44} /><h1>Mission not found</h1><p>This mission is not on this device and shared persistence may not be connected. Ask the creator for the complete portable link.</p><a className="button button-primary" href="/explore">Create a new mission</a></div></main>
+      <main className="empty-state" id="main-content"><div><Binoculars size={44} /><h1>Mission not found</h1><p>This mission is not saved on this device. Ask the creator for the complete portable link, including everything after the question mark.</p><a className="button button-primary" href="/explore">Create a new mission</a></div></main>
     );
   }
 
@@ -112,7 +111,7 @@ export function MissionView({ missionId }: { missionId: string }) {
     <main className="mission-page" id="main-content">
       <div className="mission-shell">
         <div className="mission-toolbar">
-          <p>{missionSource === "portable" ? "Portable mission data · verify the location and access before going" : missionSource === "public" ? "Public mission record · verify the location and access before going" : mission.analysisSnapshot.dataStatus === "live" ? "Saved on this device from live analysis" : "Saved on this device from a labeled demo snapshot"}</p>
+          <p>{missionSource === "portable" ? "Account-free portable mission · verify the location and access before going" : mission.analysisSnapshot.dataStatus === "live" ? "Saved privately on this device from live analysis" : "Saved privately on this device from a labeled demo snapshot"}</p>
           <div className="mission-toolbar-actions">
             <button className="icon-button" onClick={() => window.print()} aria-label="Print mission"><Printer size={17} /></button>
             <button className="button button-dark button-small" onClick={() => void shareMission()}><Link2 size={15} /><span aria-live="polite">{shareLabel}</span></button>

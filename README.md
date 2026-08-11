@@ -20,7 +20,7 @@ Live app: [wildgap-habitat-2026.fink692.chatgpt.site](https://wildgap-habitat-20
 - Interactive MapLibre/OpenFreeMap map plus an equivalent keyboard-accessible ranked list
 - Portable, printable mission links that work without an account
 - Field cards with score provenance, weather, readiness checks, a timed protocol, and optional evidence completion
-- Optional Supabase anonymous sessions, public sharing, RLS, and Turnstile protection
+- Device-local mission history with complete, account-free share links
 - Explicitly labeled Winnipeg demo snapshot for outage-safe judging
 
 ## Run locally
@@ -35,25 +35,9 @@ pnpm dev
 
 Open `http://localhost:3000`. No environment variables are required for the portable demo.
 
-## Optional shared persistence
+## Account-free mission storage
 
-The production database schema, owner index, RLS policies, and public client configuration are provisioned. Anonymous sign-ins are the only dashboard-controlled switch: until they are enabled, the deployed app safely falls back to its complete portable mission links.
-
-1. Create a free Supabase project.
-2. Apply both SQL files in `supabase/migrations/` in filename order.
-3. Enable anonymous sign-ins in Supabase Auth.
-4. Add `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` to `.env.local`.
-5. For public deployment, configure Cloudflare Turnstile as Supabase Auth CAPTCHA and add `NEXT_PUBLIC_TURNSTILE_SITE_KEY`.
-
-After enabling anonymous sign-ins, verify the real authentication and RLS path with:
-
-```bash
-pnpm test:supabase
-```
-
-The check creates two temporary anonymous sessions, proves owner-only mutation and private-row isolation, and deletes its temporary mission row.
-
-Without Supabase, missions stay in local storage and the complete mission payload is embedded in the share URL. This is an intentional resilient fallback, not silent data loss.
+WildGap has no sign-in, user account, or mission database. Missions stay in the browser's local storage, and the complete validated mission payload is embedded in its share URL. Anyone holding a complete link can read that mission, so users should share it intentionally and avoid putting sensitive information in evidence URLs. Opening a portable link saves that mission on the receiving device for offline-friendly return visits.
 
 ## Scoring method
 
@@ -79,7 +63,6 @@ flowchart LR
   S --> M[Map + ranked list]
   M --> F[Field mission]
   F --> P[Portable URL/local storage]
-  F --> DB[(Optional Supabase + RLS)]
 ```
 
 ## Data sources and attribution

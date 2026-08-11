@@ -118,7 +118,7 @@ export default function Home() {
         <div className="section-heading centered-heading">
           <p className="eyebrow">Measured honestly</p>
           <h2>Count actions, not promises.</h2>
-          <p>Until shared persistence is connected, these counters reflect missions created and completed on this device.</p>
+          <p>These privacy-friendly counters reflect missions created and completed on this device.</p>
         </div>
         <ImpactStats />
         <div className="trust-grid">

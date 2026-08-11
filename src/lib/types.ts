@@ -81,7 +81,6 @@ export interface HabitatAnalysis {
 
 export interface Mission {
   id: string;
-  ownerId?: string;
   areaLabel: string;
   latitude: number;
   longitude: number;
@@ -101,7 +100,6 @@ export interface Mission {
   durationMinutes: number;
   status: "planned" | "completed";
   evidenceUrl?: string;
-  isPublic: boolean;
   createdAt: string;
   completedAt?: string;
 }

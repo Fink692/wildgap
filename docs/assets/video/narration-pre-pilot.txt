@@ -12,7 +12,7 @@ Open-Meteo adds the previous month’s temperature and precipitation context, th
 
 The mission card works on a phone, prints cleanly, and can be shared without requiring an account. After the outing, the owner can mark it complete and add a public iNaturalist, eBird, or comparable evidence link. Impact counters report only defensible actions: missions planned, missions completed, priority cells visited, and evidence links added.
 
-Under the hood, WildGap uses Next.js, TypeScript, MapLibre, OpenFreeMap, H3, GBIF, and Open-Meteo. Live requests have timeouts, bounded concurrency, and cache windows. A clearly labeled Winnipeg snapshot keeps the primary demo usable during third-party outages; it is never silently substituted for global live data. Optional Supabase anonymous sessions and row-level security add persistent public links, while portable mission URLs preserve the no-account fallback.
+Under the hood, WildGap uses Next.js, TypeScript, MapLibre, OpenFreeMap, H3, GBIF, and Open-Meteo. Live requests have timeouts, bounded concurrency, and cache windows. A clearly labeled Winnipeg snapshot keeps the primary demo usable during third-party outages; it is never silently substituted for global live data. Missions stay on-device and travel in validated portable links, so the complete workflow needs no sign-in or mission database.
 
 This is the pre-pilot cut. Before submission, the proof segment must be replaced with the real Winnipeg outing, its public observation evidence, and measured results from two uncoached usability tests. No outcomes are invented.
 
