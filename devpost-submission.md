@@ -86,7 +86,7 @@ Missions require no authentication or central mission database. The browser vali
 
 ### Live-data path
 
-Open **Scout a habitat**, search a city, paste exact coordinates, use browser location, or click the map to drop a pin. Choose a radius and run the analysis. A first uncached result usually takes 5–15 seconds because GBIF requests are paced and rate-limit aware; progressive status remains visible. Confirm that the result identifies itself as live and shows explicit data completeness.
+Open **Scout a habitat**, search a city, paste exact coordinates, use browser location, or click the map to drop a pin. Choose a radius and run the analysis. A first uncached result usually takes 5–15 seconds because GBIF requests are paced and rate-limit aware; progressive status remains visible. Confirm that the result identifies itself as live, shows explicit data completeness, and recovers weather context in the browser if the hosting worker cannot reach Open-Meteo.
 
 ### Local verification
 

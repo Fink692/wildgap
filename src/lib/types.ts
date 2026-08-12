@@ -1,7 +1,7 @@
 export type Confidence = "High" | "Medium" | "Low";
 export type TargetTaxon = "Plants" | "Fungi" | "Birds" | "Insects";
 export type DataStatus = "live" | "demo-snapshot";
-export type WeatherStatus = "complete" | "forecast-only" | "unavailable";
+export type WeatherStatus = "complete" | "forecast-only" | "climate-only" | "unavailable";
 
 export interface TaxonCounts {
   Plants: number;

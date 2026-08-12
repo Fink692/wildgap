@@ -20,7 +20,7 @@ import { HabitatMap } from "@/components/habitat-map";
 import { persistMission } from "@/lib/mission-store";
 import { encodeMission } from "@/lib/portable-mission";
 import type { GeocodeResult, HabitatAnalysis, HabitatCell, Mission } from "@/lib/types";
-import { recoverForecast } from "@/lib/weather";
+import { recoverWeather } from "@/lib/weather";
 
 const WINNIPEG: GeocodeResult = {
   id: 6183235,
@@ -94,7 +94,7 @@ export function ExplorerApp({ initialDemo = false }: { initialDemo?: boolean }) 
       const response = await fetch(`/api/analysis?${params}`);
       const payload = (await response.json()) as HabitatAnalysis | { error: string };
       if (!response.ok || "error" in payload) throw new Error("error" in payload ? payload.error : "Analysis failed");
-      const completePayload = await recoverForecast(payload);
+      const completePayload = await recoverWeather(payload);
       setAnalysis(completePayload);
       const first = completePayload.cells[0];
       setSelectedCellId(first?.id);

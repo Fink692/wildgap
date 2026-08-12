@@ -21,7 +21,7 @@ Use this sheet during the real sessions. Do not enter estimates or reconstructed
 - Independent application security scan: no high or critical findings; both medium findings fixed and regression-tested
 - GBIF request scheduling: 14 recent/prior cell-window comparisons, with a tested maximum of two concurrent occurrence searches, paced starts, and bounded retry of 429/502/503/504 responses
 - Partial-source contract: one failed GBIF cell and both weather services unavailable still returned 6/7 honest cells, no estimates, explicit data quality, and a manual mission-date fallback
-- Forecast recovery: when the hosting worker cannot reach Open-Meteo, the browser retries the public CORS-enabled forecast endpoint and preserves manual date entry if that also fails
+- Weather recovery: when the hosting worker cannot reach Open-Meteo, the browser retries the public CORS-enabled climate and forecast endpoints and preserves manual date entry if those also fail
 
 These technical checks are the only evidence claimed by this submission. No independent usability result or physical field outing is claimed.
 
