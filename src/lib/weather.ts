@@ -1,4 +1,4 @@
-import type { SurveyWindow } from "@/lib/types";
+import type { HabitatAnalysis, SurveyWindow } from "@/lib/types";
 
 export interface DailyForecast {
   time: string[];
@@ -23,4 +23,35 @@ export function rankSurveyWindows(forecast: DailyForecast): SurveyWindow[] {
       label: score >= 80 ? "Excellent" : score >= 65 ? "Good" : "Fair",
     } satisfies SurveyWindow;
   }).sort((a, b) => b.score - a.score).slice(0, 3);
+}
+
+export async function recoverForecast(analysis: HabitatAnalysis) {
+  if (analysis.dataQuality.weatherStatus !== "unavailable") return analysis;
+  try {
+    const params = new URLSearchParams({
+      latitude: String(analysis.area.latitude),
+      longitude: String(analysis.area.longitude),
+      daily: "temperature_2m_max,precipitation_probability_max,wind_speed_10m_max",
+      forecast_days: "7",
+      timezone: "auto",
+    });
+    const response = await fetch(`https://api.open-meteo.com/v1/forecast?${params}`, {
+      headers: { Accept: "application/json" },
+      signal: AbortSignal.timeout(8_000),
+    });
+    if (!response.ok) return analysis;
+    const payload = (await response.json()) as { daily?: DailyForecast };
+    if (!payload.daily) return analysis;
+    const surveyWindows = rankSurveyWindows(payload.daily);
+    if (!surveyWindows.length) return analysis;
+    return {
+      ...analysis,
+      sourceTimestamps: { ...analysis.sourceTimestamps, weather: new Date().toISOString() },
+      dataStatusMessage: `${analysis.dataStatusMessage} Forecast timing was recovered directly from Open-Meteo.`,
+      dataQuality: { ...analysis.dataQuality, weatherStatus: "forecast-only" as const },
+      surveyWindows,
+    };
+  } catch {
+    return analysis;
+  }
 }

@@ -5,7 +5,7 @@ Use this sheet during the real sessions. Do not enter estimates or reconstructed
 ## Automated and product verification — August 12, 2026
 
 - TypeScript typecheck: passed
-- Unit and API contract tests: 22/22 passed
+- Unit and API contract tests: 24/24 passed
 - Production build: passed
 - Production deployment: passed at `https://wildgap-habitat-2026.fink692.chatgpt.site`
 - Winnipeg demo API: 200, 7 cells, 3 survey windows, labeled snapshot
