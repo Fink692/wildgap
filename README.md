@@ -13,7 +13,7 @@ Live app: [wildgap-habitat-2026.fink692.chatgpt.site](https://wildgap-habitat-20
 ## What works
 
 - Global place search through Open-Meteo Geocoding
-- Adaptive 7–19-cell H3 analysis for 2, 5, and 10 km areas
+- Focused seven-cell H3 analysis for 2, 5, and 10 km areas
 - Live GBIF occurrence counts for the latest 12 months versus the preceding 36 months
 - Transparent survey-priority score and confidence level
 - Previous-month climate context and seven-day survey windows from Open-Meteo
@@ -88,7 +88,6 @@ pnpm build
 - [`docs/TEST_RESULTS.md`](docs/TEST_RESULTS.md) — technical verification record and intentionally blank future field sections
 - [`docs/SUBMISSION_CHECKLIST.md`](docs/SUBMISSION_CHECKLIST.md) — final operations checklist
 - [`docs/OUTREACH.md`](docs/OUTREACH.md) — ethical public-voting copy
-- [`docs/assets/video/wildgap-final.mp4`](docs/assets/video/wildgap-final.mp4) — narrated, captioned 66-second final product cut
 - [`docs/assets/architecture.svg`](docs/assets/architecture.svg) and [`docs/assets/screenshots`](docs/assets/screenshots) — upload-ready visuals
 - `/opengraph-image` — generated 1200×630 social card
 

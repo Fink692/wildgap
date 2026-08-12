@@ -15,7 +15,7 @@ export function analysisCacheKey(input: {
   radiusKm: number;
   label: string;
 }) {
-  return [input.latitude.toFixed(5), input.longitude.toFixed(5), input.radiusKm, input.label].join(":");
+  return [input.latitude.toFixed(5), input.longitude.toFixed(5), input.radiusKm].join(":");
 }
 
 export function getCachedAnalysis(key: string, now = Date.now()) {

@@ -14,7 +14,7 @@ import {
 import { ImpactStats } from "@/components/impact-stats";
 
 const trustFacts = [
-  { icon: Layers3, value: "7–19", label: "adaptive H3 cells", detail: "Enough local comparison without creating a wall of hexagons." },
+  { icon: Layers3, value: "7", label: "focused H3 cells", detail: "A fast local comparison that stays readable on a phone." },
   { icon: Database, value: "2", label: "observation windows", detail: "The latest 12 months versus an annualized three-year baseline." },
   { icon: Gauge, value: "50+", label: "records to rank", detail: "Below the evidence floor, WildGap suppresses the leaderboard." },
   { icon: ShieldCheck, value: "0", label: "population claims", detail: "A coverage gap is a reason to look—not evidence of ecological decline." },

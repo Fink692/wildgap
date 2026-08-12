@@ -9,8 +9,7 @@ import {
 
 export function cellsForArea(latitude: number, longitude: number, radiusKm: number) {
   const resolution = radiusKm <= 2 ? 8 : radiusKm <= 5 ? 7 : 6;
-  const ringSize = radiusKm >= 10 ? 1 : 2;
-  return gridDisk(latLngToCell(latitude, longitude, resolution), ringSize);
+  return gridDisk(latLngToCell(latitude, longitude, resolution), 1);
 }
 
 export function polygonForCell(cell: string): [number, number][] {

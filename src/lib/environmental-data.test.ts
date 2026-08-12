@@ -77,9 +77,49 @@ describe("live environmental analysis scheduling", () => {
     });
 
     expect(analysis.dataStatus).toBe("live");
-    expect(analysis.cells).toHaveLength(19);
-    expect(occurrenceRequestCount).toBe(39);
-    expect(maximumOccurrenceRequests).toBeLessThanOrEqual(6);
+    expect(analysis.cells).toHaveLength(7);
+    expect(analysis.dataQuality).toEqual({ attemptedCells: 7, completeCells: 7, failedCellWindows: 0, weatherStatus: "complete" });
+    expect(occurrenceRequestCount).toBe(15);
+    expect(maximumOccurrenceRequests).toBeLessThanOrEqual(2);
     expect(maximumOccurrenceRequests).toBeGreaterThan(1);
+  });
+
+  it("returns an honest partial analysis when one cell window and weather are unavailable", async () => {
+    let failedOccurrenceUrl = "";
+
+    vi.stubGlobal("fetch", vi.fn(async (input: string | URL | Request) => {
+      const url = String(input);
+      if (url.includes("/species/match")) {
+        const key = url.includes("Aves") ? 212 : url.includes("Insecta") ? 216 : url.includes("Plantae") ? 6 : 5;
+        return json({ usageKey: key });
+      }
+      if (url.includes("/occurrence/search")) {
+        if (!failedOccurrenceUrl) failedOccurrenceUrl = url;
+        if (url === failedOccurrenceUrl) return json({ error: "rate limited" }, 429);
+        return json({
+          count: 30,
+          facets: [
+            { field: "kingdomKey", counts: [{ name: "6", count: 10 }, { name: "5", count: 4 }] },
+            { field: "classKey", counts: [{ name: "212", count: 8 }, { name: "216", count: 8 }] },
+          ],
+        });
+      }
+      if (url.includes("open-meteo.com")) return json({ error: "temporary" }, 503);
+      throw new Error(`Unexpected URL: ${url}`);
+    }));
+
+    const analysis = await buildLiveAnalysis({
+      latitude: 51.50853,
+      longitude: -0.12574,
+      radiusKm: 2,
+      label: "London test",
+    });
+
+    expect(analysis.dataStatus).toBe("live");
+    expect(analysis.cells).toHaveLength(6);
+    expect(analysis.dataQuality).toEqual({ attemptedCells: 7, completeCells: 6, failedCellWindows: 1, weatherStatus: "unavailable" });
+    expect(analysis.dataStatusMessage).toContain("6 of 7 cells");
+    expect(analysis.surveyWindows).toEqual([]);
+    expect(analysis.climate.temperatureAnomalyC).toBeNull();
   });
 });

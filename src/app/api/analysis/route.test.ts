@@ -13,7 +13,7 @@ describe("GET /api/analysis", () => {
     const payload = await response.json();
     expect(response.status).toBe(200);
     expect(payload.dataStatus).toBe("demo-snapshot");
-    expect(payload.cells).toHaveLength(19);
+    expect(payload.cells).toHaveLength(7);
     expect(response.headers.get("X-WildGap-Cache")).toBe("SNAPSHOT");
   });
 });

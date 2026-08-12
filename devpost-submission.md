@@ -47,7 +47,7 @@ During hardening, Codex measured uncached production behavior, found upstream co
 ## Key Features
 
 - Global place search with 2, 5, and 10 kilometre analysis radii
-- Adaptive 7–19-cell H3 coverage
+- Focused seven-cell H3 coverage for fast, readable local comparisons
 - Live GBIF comparison of the latest 12 months with the preceding 36 months
 - Transparent `55% density gap + 30% coverage change + 15% target gap` score
 - High, Medium, and Low confidence levels with low-data ranking suppression
@@ -86,7 +86,7 @@ Missions require no authentication or central mission database. The browser vali
 
 ### Live-data path
 
-Open **Scout a habitat**, search a location, choose a radius, and run the analysis. A first uncached result may take several seconds because GBIF requests are bounded and rate-limit aware; progressive status remains visible. Confirm that the result identifies itself as live and shows source timestamps.
+Open **Scout a habitat**, search a city, paste exact coordinates, use browser location, or click the map to drop a pin. Choose a radius and run the analysis. A first uncached result usually takes 5–15 seconds because GBIF requests are paced and rate-limit aware; progressive status remains visible. Confirm that the result identifies itself as live and shows explicit data completeness.
 
 ### Local verification
 
@@ -101,7 +101,7 @@ pnpm build
 pnpm dev
 ```
 
-No API keys or accounts are required. The current automated suite contains 20 passing unit and API-contract tests.
+No API keys or accounts are required. The current automated suite contains 21 passing unit and API-contract tests.
 
 ## Public Demo Link
 
@@ -110,10 +110,6 @@ https://wildgap-habitat-2026.fink692.chatgpt.site
 ## Public Repository Link
 
 https://github.com/Fink692/wildgap
-
-## Demo Video
-
-The final 66-second product cut is `docs/assets/video/wildgap-final.mp4`. It is narrated, captioned, and exported as 1920×1080 H.264/AAC at 30 fps. It uses only product captures and original project graphics, and explicitly makes no field-outing or human-tester claim. The editable timeline, narration, captions, contact sheet, and source/license record sit beside the export.
 
 ## Screenshot Shot List
 
@@ -135,7 +131,7 @@ The final 66-second product cut is `docs/assets/video/wildgap-final.mp4`. It is 
 - Written problem, implementation, and technology description: satisfied by this draft
 - Third-party attribution requirement: satisfied in the Architecture section and repository README
 - Video requirement: not required
-- Automated tests: 20/20 passing
+- Automated tests: 21/21 passing
 - Production deployment: responding successfully
 - High-confidence secret scan: required again during the final submit review
 - Evidence boundary: no field mission or independent human usability results are part of this submission

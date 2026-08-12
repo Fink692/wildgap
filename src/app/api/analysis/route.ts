@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
   const cacheKey = analysisCacheKey(analysisInput);
   const cached = getCachedAnalysis(cacheKey);
   if (cached) {
-    return Response.json(cached, {
+    return Response.json({ ...cached, area: { ...cached.area, label } }, {
       headers: { "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400", "X-WildGap-Cache": "HIT" },
     });
   }
@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
       { status: 429, headers: { "Retry-After": String(admission.retryAfterSeconds), "Cache-Control": "private, no-store" } },
     );
   }
-  if (!acquireLiveAnalysis()) {
+  if (!acquireLiveAnalysis(2)) {
     return Response.json(
       { error: "WildGap is already processing several live analyses. Please retry shortly." },
       { status: 503, headers: { "Retry-After": "10", "Cache-Control": "private, no-store" } },

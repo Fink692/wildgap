@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { cellsForArea, polygonForCell } from "@/lib/geo";
 
 describe("H3 coverage", () => {
-  it.each([[2, 19], [5, 19], [10, 7]])("uses a bounded disk for a %s km area", (radius, expected) => {
+  it.each([[2, 7], [5, 7], [10, 7]])("uses a compact seven-cell disk for a %s km area", (radius, expected) => {
     expect(cellsForArea(49.8844, -97.14704, radius)).toHaveLength(expected);
   });
 

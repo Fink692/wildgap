@@ -7,6 +7,7 @@ import type {
   SurveyWindow,
   TargetTaxon,
   TaxonCounts,
+  WeatherStatus,
 } from "@/lib/types";
 
 const GBIF_BASE = "https://api.gbif.org/v1";
@@ -18,26 +19,54 @@ const DEFAULT_TAXON_KEYS: Record<TargetTaxon, number> = {
   Birds: 212,
   Insects: 216,
 };
-const GBIF_SEARCH_CONCURRENCY = 6;
+const GBIF_SEARCH_CONCURRENCY = 2;
+const GBIF_REQUEST_SPACING_MS = 275;
+
+let nextGbifRequestAt = 0;
+let gbifPacingQueue = Promise.resolve();
 
 type JsonRecord = Record<string, unknown>;
 
-async function fetchJson<T>(url: string, revalidate: number): Promise<T> {
-  for (let attempt = 0; attempt < 3; attempt += 1) {
+async function paceGbifRequest() {
+  if (process.env.NODE_ENV === "test") return;
+  const scheduled = gbifPacingQueue.then(async () => {
+    const waitMs = Math.max(0, nextGbifRequestAt - Date.now());
+    if (waitMs) await new Promise<void>((resolve) => setTimeout(resolve, waitMs));
+    nextGbifRequestAt = Date.now() + GBIF_REQUEST_SPACING_MS;
+  });
+  gbifPacingQueue = scheduled.catch(() => undefined);
+  await scheduled;
+}
+
+function retryDelayMs(response: Response, attempt: number) {
+  if (process.env.NODE_ENV === "test") return 0;
+  const retryAfter = response.headers.get("retry-after");
+  const seconds = Number(retryAfter);
+  if (Number.isFinite(seconds) && seconds > 0) return Math.min(seconds * 1_000, 8_000);
+  if (retryAfter) {
+    const dateDelay = Date.parse(retryAfter) - Date.now();
+    if (Number.isFinite(dateDelay) && dateDelay > 0) return Math.min(dateDelay, 8_000);
+  }
+  return Math.min(response.status === 429 ? 1_500 * (attempt + 1) : 350 * (attempt + 1), 8_000);
+}
+
+async function fetchJson<T>(
+  url: string,
+  revalidate: number,
+  options: { attempts?: number; beforeAttempt?: () => Promise<void>; timeoutMs?: number } = {},
+): Promise<T> {
+  const attempts = options.attempts ?? 3;
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    await options.beforeAttempt?.();
     const response = await fetch(url, {
       headers: { Accept: "application/json", "User-Agent": "WildGap/1.0 hackathon project" },
       next: { revalidate },
-      signal: AbortSignal.timeout(8_000),
+      signal: AbortSignal.timeout(options.timeoutMs ?? 8_000),
     });
     if (response.ok) return (await response.json()) as T;
     const retryable = response.status === 429 || [502, 503, 504].includes(response.status);
-    if (retryable && attempt < 2) {
-      const retryAfter = Number(response.headers.get("retry-after") ?? 0);
-      const minimumDelay = response.status === 429 ? 800 : 250;
-      const delayMs = Math.min(
-        Math.max(Number.isFinite(retryAfter) ? retryAfter * 1_000 : 0, minimumDelay * (attempt + 1)),
-        4_000,
-      );
+    if (retryable && attempt < attempts - 1) {
+      const delayMs = retryDelayMs(response, attempt);
       await new Promise<void>((resolve) => setTimeout(resolve, delayMs));
       continue;
     }
@@ -112,6 +141,7 @@ async function gbifWindow(
   return fetchJson<GbifResponse>(
     `${GBIF_BASE}/occurrence/search?${query.toString()}`,
     86_400,
+    { attempts: 4, beforeAttempt: paceGbifRequest },
   );
 }
 
@@ -167,15 +197,18 @@ async function climateAndSurveyWindows(latitude: number, longitude: number) {
   const archiveStart = monthRange(previousMonth.getUTCFullYear() - 10, previousMonth.getUTCMonth()).start;
   const archiveUrl = `${ARCHIVE_BASE}/archive?latitude=${latitude}&longitude=${longitude}&start_date=${isoDate(archiveStart)}&end_date=${isoDate(currentRange.end)}&daily=temperature_2m_max,precipitation_sum&timezone=auto`;
   const forecastUrl = `${WEATHER_BASE}/forecast?latitude=${latitude}&longitude=${longitude}&daily=temperature_2m_max,precipitation_probability_max,wind_speed_10m_max&forecast_days=7&timezone=auto`;
-  const [archive, forecast] = await Promise.all([
+  const [archiveResult, forecastResult] = await Promise.allSettled([
     fetchJson<{ daily: DailyWeather }>(archiveUrl, 86_400),
     fetchJson<{ daily: DailyWeather }>(forecastUrl, 3_600),
   ]);
 
+  const archive = archiveResult.status === "fulfilled" ? archiveResult.value : null;
+  const forecast = forecastResult.status === "fulfilled" ? forecastResult.value : null;
+
   const currentYear = previousMonth.getUTCFullYear();
   const month = previousMonth.getUTCMonth();
   const groups = new Map<number, { temperatures: number[]; precipitation: number[] }>();
-  archive.daily.time.forEach((dateString, index) => {
+  archive?.daily.time.forEach((dateString, index) => {
     const date = new Date(`${dateString}T00:00:00Z`);
     if (date.getUTCMonth() !== month) return;
     const group = groups.get(date.getUTCFullYear()) ?? { temperatures: [], precipitation: [] };
@@ -214,10 +247,11 @@ async function climateAndSurveyWindows(latitude: number, longitude: number) {
     summary,
   };
 
-  const windows: SurveyWindow[] = forecast.daily.time.map((date, index) => {
-    const temperature = forecast.daily.temperature_2m_max[index];
-    const precipitation = forecast.daily.precipitation_probability_max?.[index] ?? 50;
-    const wind = forecast.daily.wind_speed_10m_max?.[index] ?? 30;
+  const forecastDaily = forecast?.daily;
+  const windows: SurveyWindow[] = (forecastDaily?.time ?? []).map((date, index) => {
+    const temperature = forecastDaily!.temperature_2m_max[index];
+    const precipitation = forecastDaily!.precipitation_probability_max?.[index] ?? 50;
+    const wind = forecastDaily!.wind_speed_10m_max?.[index] ?? 30;
     const temperaturePenalty = temperature < 5 ? (5 - temperature) * 4 : temperature > 30 ? (temperature - 30) * 4 : 0;
     const score = Math.round(Math.max(0, 100 - precipitation * 0.55 - wind * 0.8 - temperaturePenalty));
     return {
@@ -229,7 +263,15 @@ async function climateAndSurveyWindows(latitude: number, longitude: number) {
       label: score >= 80 ? "Excellent" : score >= 65 ? "Good" : "Fair",
     };
   }).sort((a, b) => b.score - a.score).slice(0, 3);
-  return { climate, windows, fetchedAt: new Date().toISOString() };
+  const status: WeatherStatus = archive && forecast ? "complete" : forecast ? "forecast-only" : "unavailable";
+  return { climate, windows, status, fetchedAt: new Date().toISOString() };
+}
+
+function completedObservationWindows(now: Date) {
+  const recentEnd = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
+  const recentStart = shiftYears(recentEnd, -1);
+  const priorStart = shiftYears(recentStart, -3);
+  return { recentStart, recentEnd, priorStart };
 }
 
 export async function buildLiveAnalysis(input: {
@@ -239,8 +281,7 @@ export async function buildLiveAnalysis(input: {
   label: string;
 }): Promise<HabitatAnalysis> {
   const now = new Date();
-  const recentStart = shiftYears(now, -1);
-  const priorStart = shiftYears(now, -4);
+  const { recentStart, recentEnd, priorStart } = completedObservationWindows(now);
   const h3Cells = cellsForArea(input.latitude, input.longitude, input.radiusKm);
   const cellGeometry = h3Cells.map((cell) => ({
     cell,
@@ -248,7 +289,7 @@ export async function buildLiveAnalysis(input: {
     areaKm2: areaForCell(cell),
   }));
   const gbifTasks = cellGeometry.flatMap(({ polygon }, cellIndex) => [
-    { cellIndex, window: "recent" as const, polygon, start: recentStart, end: now },
+    { cellIndex, window: "recent" as const, polygon, start: recentStart, end: recentEnd },
     { cellIndex, window: "prior" as const, polygon, start: priorStart, end: recentStart },
   ]);
 
@@ -258,7 +299,7 @@ export async function buildLiveAnalysis(input: {
   const [gbifResponses, weather, taxonKeys] = await Promise.all([
     mapWithConcurrency(gbifTasks, GBIF_SEARCH_CONCURRENCY, async (task) => ({
       ...task,
-      response: await gbifWindow(task.polygon, task.start, task.end),
+      response: await gbifWindow(task.polygon, task.start, task.end).catch(() => null),
     })),
     climateAndSurveyWindows(input.latitude, input.longitude),
     resolveTaxonKeys(),
@@ -266,15 +307,22 @@ export async function buildLiveAnalysis(input: {
   const windowsByCell = gbifResponses.reduce<Array<Partial<Record<"recent" | "prior", GbifResponse>>>>(
     (cells, result) => {
       const windows = cells[result.cellIndex] ?? {};
-      windows[result.window] = result.response;
+      if (result.response) windows[result.window] = result.response;
       cells[result.cellIndex] = windows;
       return cells;
     },
     [],
   );
-  const rawCells = cellGeometry.map(({ areaKm2 }, index) => {
-    const recent = windowsByCell[index]?.recent;
-    const prior = windowsByCell[index]?.prior;
+  const completeCellIndexes = cellGeometry
+    .map((_, index) => index)
+    .filter((index) => windowsByCell[index]?.recent && windowsByCell[index]?.prior);
+  if (completeCellIndexes.length < 3) {
+    throw new Error(`Only ${completeCellIndexes.length} of ${cellGeometry.length} cells returned complete GBIF coverage`);
+  }
+  const rawCells = completeCellIndexes.map((cellIndex) => {
+    const { areaKm2 } = cellGeometry[cellIndex];
+    const recent = windowsByCell[cellIndex]?.recent;
+    const prior = windowsByCell[cellIndex]?.prior;
     if (!recent || !prior) throw new Error("Incomplete GBIF window response");
     return {
       recentRecords: recent.count,
@@ -288,11 +336,12 @@ export async function buildLiveAnalysis(input: {
   const totalPrior = rawCells.reduce((total, cell) => total + cell.priorRecords, 0);
   const comparableCells = rawCells.filter((cell) => cell.priorRecords >= 20).length;
   const rankingSuppressed = totalPrior < 50 || comparableCells < 3;
-  const cells = h3Cells.map((cell, index) => {
+  const cells = completeCellIndexes.map((cellIndex, index) => {
+    const cell = h3Cells[cellIndex];
     const result = scored[index];
     return {
       id: cell,
-      polygon: cellGeometry[index].polygon,
+      polygon: cellGeometry[cellIndex].polygon,
       center: centerForCell(cell),
       areaKm2: Number(rawCells[index].areaKm2.toFixed(2)),
       gapScore: rankingSuppressed ? null : result.gapScore,
@@ -316,7 +365,15 @@ export async function buildLiveAnalysis(input: {
       weather: weather.fetchedAt,
     },
     dataStatus: "live",
-    dataStatusMessage: "Live GBIF occurrence coverage and Open-Meteo weather context.",
+    dataStatusMessage: completeCellIndexes.length === h3Cells.length
+      ? "Live GBIF coverage is complete for every comparison cell."
+      : `Live GBIF coverage is complete for ${completeCellIndexes.length} of ${h3Cells.length} cells; incomplete cells were omitted rather than estimated.`,
+    dataQuality: {
+      attemptedCells: h3Cells.length,
+      completeCells: completeCellIndexes.length,
+      failedCellWindows: gbifResponses.filter((result) => !result.response).length,
+      weatherStatus: weather.status,
+    },
     rankingSuppressed,
     rankingMessage: rankingSuppressed
       ? "Not enough comparable baseline records to rank cells responsibly. Every cell remains available for an exploratory mission."

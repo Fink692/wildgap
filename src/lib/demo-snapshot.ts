@@ -65,6 +65,12 @@ export function buildWinnipegSnapshot(radiusKm = 5): HabitatAnalysis {
     dataStatus: "demo-snapshot",
     dataStatusMessage:
       "Clearly labeled demo snapshot from August 10, 2026. Retry to request live sources.",
+    dataQuality: {
+      attemptedCells: h3Cells.length,
+      completeCells: h3Cells.length,
+      failedCellWindows: 0,
+      weatherStatus: "complete",
+    },
     rankingSuppressed,
     rankingMessage: rankingSuppressed
       ? "Not enough comparable baseline records to rank cells responsibly."

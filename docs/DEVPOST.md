@@ -51,7 +51,6 @@ Community users can run WildGap missions in permitted public locations and, if t
 
 - [x] Add final live URL and public GitHub URL
 - [x] State clearly that no field or tester results are claimed
-- [x] Export and verify the 66-second product video
 - [x] Add the Devpost project thumbnail
 - [x] Prepare current desktop and mobile screenshots
 - [ ] Confirm all team, eligibility and side-prize fields
@@ -65,4 +64,3 @@ Community users can run WildGap missions in permitted public locations and, if t
 - `assets/screenshots/explorer-desktop.png`
 - `assets/screenshots/explorer-mobile.png`
 - `assets/screenshots/mission-desktop.png`
-- `assets/video/wildgap-final.mp4` — final 66-second product cut with no field/tester claim

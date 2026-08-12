@@ -1,25 +1,30 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { MapPinned } from "lucide-react";
-import type { HabitatAnalysis } from "@/lib/types";
+import type { GeocodeResult, HabitatAnalysis } from "@/lib/types";
 
 export function HabitatMap({
   analysis,
+  focus,
   selectedCellId,
   onSelect,
+  onChooseCoordinates,
 }: {
   analysis: HabitatAnalysis | null;
+  focus: GeocodeResult;
   selectedCellId?: string;
   onSelect: (cellId: string) => void;
+  onChooseCoordinates: (latitude: number, longitude: number) => void;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<import("maplibre-gl").Map | null>(null);
   const selectRef = useRef(onSelect);
   selectRef.current = onSelect;
+  const chooseCoordinatesRef = useRef(onChooseCoordinates);
+  chooseCoordinatesRef.current = onChooseCoordinates;
 
   useEffect(() => {
-    if (!containerRef.current || !analysis) return;
+    if (!containerRef.current) return;
     let cancelled = false;
     let map: import("maplibre-gl").Map;
 
@@ -28,8 +33,8 @@ export function HabitatMap({
       map = new maplibre.Map({
         container: containerRef.current,
         style: "https://tiles.openfreemap.org/styles/liberty",
-        center: [analysis.area.longitude, analysis.area.latitude],
-        zoom: analysis.area.radiusKm === 2 ? 11.5 : analysis.area.radiusKm === 5 ? 10.5 : 9.4,
+        center: [focus.longitude, focus.latitude],
+        zoom: analysis ? (analysis.area.radiusKm === 2 ? 11.5 : analysis.area.radiusKm === 5 ? 10.5 : 9.4) : 11,
         attributionControl: false,
       });
       mapRef.current = map;
@@ -37,6 +42,12 @@ export function HabitatMap({
       map.addControl(new maplibre.AttributionControl({ compact: true }), "bottom-right");
 
       map.on("load", () => {
+        if (!analysis) {
+          new maplibre.Marker({ color: "#e4a84d" }).setLngLat([focus.longitude, focus.latitude]).addTo(map);
+          map.on("click", (event) => chooseCoordinatesRef.current(event.lngLat.lat, event.lngLat.lng));
+          map.getCanvas().style.cursor = "crosshair";
+          return;
+        }
         const features = analysis.cells.map((cell) => ({
           type: "Feature" as const,
           properties: {
@@ -89,7 +100,7 @@ export function HabitatMap({
       map?.remove();
       mapRef.current = null;
     };
-  }, [analysis]);
+  }, [analysis, focus.latitude, focus.longitude]);
 
   useEffect(() => {
     if (!analysis || !mapRef.current?.isStyleLoaded()) return;
@@ -109,12 +120,5 @@ export function HabitatMap({
     });
   }, [analysis, selectedCellId]);
 
-  if (!analysis) {
-    return (
-      <div className="map-placeholder">
-        <div><MapPinned size={36} /><strong>Your map starts here</strong><p>Search a place and run the analysis to reveal candidate observation gaps.</p></div>
-      </div>
-    );
-  }
-  return <div ref={containerRef} className="map-container" role="region" aria-label={`Survey-priority map for ${analysis.area.label}`} />;
+  return <div ref={containerRef} className="map-container" role="region" aria-label={analysis ? `Survey-priority map for ${analysis.area.label}` : `Location picker centered on ${focus.name}`} />;
 }

@@ -1,6 +1,7 @@
 export type Confidence = "High" | "Medium" | "Low";
 export type TargetTaxon = "Plants" | "Fungi" | "Birds" | "Insects";
 export type DataStatus = "live" | "demo-snapshot";
+export type WeatherStatus = "complete" | "forecast-only" | "unavailable";
 
 export interface TaxonCounts {
   Plants: number;
@@ -67,6 +68,12 @@ export interface HabitatAnalysis {
   };
   dataStatus: DataStatus;
   dataStatusMessage: string;
+  dataQuality: {
+    attemptedCells: number;
+    completeCells: number;
+    failedCellWindows: number;
+    weatherStatus: WeatherStatus;
+  };
   rankingSuppressed: boolean;
   rankingMessage: string;
   cells: HabitatCell[];

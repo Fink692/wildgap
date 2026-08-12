@@ -20,17 +20,14 @@
 - [x] Keep mission history on-device and encode complete mission data in validated portable links.
 - [x] Explain that anyone holding a complete mission link can read its field-card data.
 
-## Final media
+## Visual assets
 
-- [x] Replace the pre-pilot script with a product-only, evidence-safe cut.
-- [x] Export a 66-second product cut with no field or tester claim.
-- [x] Verify captions, audio, H.264 video, frame rate, aspect ratio, and representative frames.
 - [x] Capture current desktop and mobile screenshots from the production deployment.
 
 ## Devpost
 
 - [x] Add the production URL and public repository URL.
-- [x] Upload the Devpost project thumbnail and prepare the video, screenshots, and architecture image.
+- [x] Upload the Devpost project thumbnail and prepare screenshots and the architecture image.
 - [x] Paste and proofread the final Devpost story.
 - [x] Verify all data/API attribution and the MIT license.
 - [x] Test the public submission and links in a logged-out browser.
