@@ -1,6 +1,7 @@
 import { createHash, randomUUID } from "node:crypto";
 import { areaForCell, cellsForArea, centerForCell, polygonForCell, polygonWkt } from "@/lib/geo";
 import { confidenceFor, explainScore, scoreCells, TARGET_TAXA } from "@/lib/scoring";
+import { rankSurveyWindows } from "@/lib/weather";
 import type {
   ClimateContext,
   HabitatAnalysis,
@@ -257,21 +258,7 @@ async function climateAndSurveyWindows(latitude: number, longitude: number) {
   };
 
   const forecastDaily = forecast?.daily;
-  const windows: SurveyWindow[] = (forecastDaily?.time ?? []).map((date, index) => {
-    const temperature = forecastDaily!.temperature_2m_max[index];
-    const precipitation = forecastDaily!.precipitation_probability_max?.[index] ?? 50;
-    const wind = forecastDaily!.wind_speed_10m_max?.[index] ?? 30;
-    const temperaturePenalty = temperature < 5 ? (5 - temperature) * 4 : temperature > 30 ? (temperature - 30) * 4 : 0;
-    const score = Math.round(Math.max(0, 100 - precipitation * 0.55 - wind * 0.8 - temperaturePenalty));
-    return {
-      date,
-      score,
-      temperatureMaxC: Math.round(temperature),
-      precipitationProbability: Math.round(precipitation),
-      windMaxKph: Math.round(wind),
-      label: score >= 80 ? "Excellent" : score >= 65 ? "Good" : "Fair",
-    };
-  }).sort((a, b) => b.score - a.score).slice(0, 3);
+  const windows: SurveyWindow[] = forecastDaily ? rankSurveyWindows(forecastDaily) : [];
   const status: WeatherStatus = archive && forecast ? "complete" : forecast ? "forecast-only" : "unavailable";
   return { climate, windows, status, fetchedAt: new Date().toISOString() };
 }

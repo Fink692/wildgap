@@ -101,7 +101,7 @@ pnpm build
 pnpm dev
 ```
 
-No API keys or accounts are required. The current automated suite contains 21 passing unit and API-contract tests.
+No API keys or accounts are required. The current automated suite contains 22 passing unit and API-contract tests.
 
 ## Public Demo Link
 
@@ -131,7 +131,7 @@ https://github.com/Fink692/wildgap
 - Written problem, implementation, and technology description: satisfied by this draft
 - Third-party attribution requirement: satisfied in the Architecture section and repository README
 - Video requirement: not required
-- Automated tests: 21/21 passing
+- Automated tests: 22/22 passing
 - Production deployment: responding successfully
 - High-confidence secret scan: required again during the final submit review
 - Evidence boundary: no field mission or independent human usability results are part of this submission

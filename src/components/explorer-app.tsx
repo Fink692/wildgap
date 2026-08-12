@@ -20,6 +20,7 @@ import { HabitatMap } from "@/components/habitat-map";
 import { persistMission } from "@/lib/mission-store";
 import { encodeMission } from "@/lib/portable-mission";
 import type { GeocodeResult, HabitatAnalysis, HabitatCell, Mission } from "@/lib/types";
+import { rankSurveyWindows, type DailyForecast } from "@/lib/weather";
 
 const WINNIPEG: GeocodeResult = {
   id: 6183235,
@@ -46,6 +47,37 @@ function coordinateQuery(value: string) {
   const longitude = Number(match[2]);
   if (!Number.isFinite(latitude) || !Number.isFinite(longitude) || Math.abs(latitude) > 90 || Math.abs(longitude) > 180) return null;
   return { latitude, longitude };
+}
+
+async function recoverForecast(analysis: HabitatAnalysis) {
+  if (analysis.dataQuality.weatherStatus !== "unavailable") return analysis;
+  try {
+    const params = new URLSearchParams({
+      latitude: String(analysis.area.latitude),
+      longitude: String(analysis.area.longitude),
+      daily: "temperature_2m_max,precipitation_probability_max,wind_speed_10m_max",
+      forecast_days: "7",
+      timezone: "auto",
+    });
+    const response = await fetch(`https://api.open-meteo.com/v1/forecast?${params}`, {
+      headers: { Accept: "application/json" },
+      signal: AbortSignal.timeout(8_000),
+    });
+    if (!response.ok) return analysis;
+    const payload = (await response.json()) as { daily?: DailyForecast };
+    if (!payload.daily) return analysis;
+    const surveyWindows = rankSurveyWindows(payload.daily);
+    if (!surveyWindows.length) return analysis;
+    return {
+      ...analysis,
+      sourceTimestamps: { ...analysis.sourceTimestamps, weather: new Date().toISOString() },
+      dataStatusMessage: `${analysis.dataStatusMessage} Forecast timing was recovered directly from Open-Meteo.`,
+      dataQuality: { ...analysis.dataQuality, weatherStatus: "forecast-only" as const },
+      surveyWindows,
+    };
+  } catch {
+    return analysis;
+  }
 }
 
 export function ExplorerApp({ initialDemo = false }: { initialDemo?: boolean }) {
@@ -93,10 +125,11 @@ export function ExplorerApp({ initialDemo = false }: { initialDemo?: boolean }) 
       const response = await fetch(`/api/analysis?${params}`);
       const payload = (await response.json()) as HabitatAnalysis | { error: string };
       if (!response.ok || "error" in payload) throw new Error("error" in payload ? payload.error : "Analysis failed");
-      setAnalysis(payload);
-      const first = payload.cells[0];
+      const completePayload = await recoverForecast(payload);
+      setAnalysis(completePayload);
+      const first = completePayload.cells[0];
       setSelectedCellId(first?.id);
-      setScheduledDate(payload.surveyWindows[0]?.date ?? new Date().toISOString().slice(0, 10));
+      setScheduledDate(completePayload.surveyWindows[0]?.date ?? new Date().toISOString().slice(0, 10));
     } catch (reason) {
       setAnalysis(null);
       setError(reason instanceof Error ? reason.message : "Analysis failed. Please retry.");
