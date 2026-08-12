@@ -53,16 +53,18 @@ function retryDelayMs(response: Response, attempt: number) {
 async function fetchJson<T>(
   url: string,
   revalidate: number,
-  options: { attempts?: number; beforeAttempt?: () => Promise<void>; timeoutMs?: number } = {},
+  options: { attempts?: number; beforeAttempt?: () => Promise<void>; timeoutMs?: number; useFrameworkCache?: boolean } = {},
 ): Promise<T> {
   const attempts = options.attempts ?? 3;
   for (let attempt = 0; attempt < attempts; attempt += 1) {
     await options.beforeAttempt?.();
-    const response = await fetch(url, {
+    const requestInit: RequestInit & { next?: { revalidate: number } } = {
       headers: { Accept: "application/json", "User-Agent": "WildGap/1.0 hackathon project" },
-      next: { revalidate },
       signal: AbortSignal.timeout(options.timeoutMs ?? 8_000),
-    });
+    };
+    if (options.useFrameworkCache === false) requestInit.cache = "no-store";
+    else requestInit.next = { revalidate };
+    const response = await fetch(url, requestInit);
     if (response.ok) return (await response.json()) as T;
     const retryable = response.status === 429 || [502, 503, 504].includes(response.status);
     if (retryable && attempt < attempts - 1) {
@@ -198,9 +200,16 @@ async function climateAndSurveyWindows(latitude: number, longitude: number) {
   const archiveUrl = `${ARCHIVE_BASE}/archive?latitude=${latitude}&longitude=${longitude}&start_date=${isoDate(archiveStart)}&end_date=${isoDate(currentRange.end)}&daily=temperature_2m_max,precipitation_sum&timezone=auto`;
   const forecastUrl = `${WEATHER_BASE}/forecast?latitude=${latitude}&longitude=${longitude}&daily=temperature_2m_max,precipitation_probability_max,wind_speed_10m_max&forecast_days=7&timezone=auto`;
   const [archiveResult, forecastResult] = await Promise.allSettled([
-    fetchJson<{ daily: DailyWeather }>(archiveUrl, 86_400),
-    fetchJson<{ daily: DailyWeather }>(forecastUrl, 3_600),
+    fetchJson<{ daily: DailyWeather }>(archiveUrl, 86_400, { useFrameworkCache: false }),
+    fetchJson<{ daily: DailyWeather }>(forecastUrl, 3_600, { useFrameworkCache: false }),
   ]);
+
+  if (archiveResult.status === "rejected") {
+    console.warn("WildGap historical weather unavailable", archiveResult.reason instanceof Error ? archiveResult.reason.message : "Unknown error");
+  }
+  if (forecastResult.status === "rejected") {
+    console.warn("WildGap forecast unavailable", forecastResult.reason instanceof Error ? forecastResult.reason.message : "Unknown error");
+  }
 
   const archive = archiveResult.status === "fulfilled" ? archiveResult.value : null;
   const forecast = forecastResult.status === "fulfilled" ? forecastResult.value : null;
